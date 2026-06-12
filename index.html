@@ -80,7 +80,7 @@
     <div class="flex-1 relative w-full h-full overflow-hidden">
         
          <!-- LINE 分享面板 (Share Modal) -->
-                <div id="share-modal" class="absolute fixed-0 z-[100] hidden opacity-0 transition-opacity duration-300 bg-black/60 flex flex-col justify-end">
+                <div id="share-modal" class="fixed inset-0 z-[100] hidden opacity-0 transition-opacity duration-300 bg-black/60 flex flex-col justify-end">
                     <div class="flex-1 w-full h-full cursor-pointer" onclick="closeShareModal()"></div>
                     <div id="share-panel" class="bg-gray-100 w-full h-[80%] rounded-t-[24px] flex flex-col translate-y-full transition-transform duration-300">
                         <div class="bg-white rounded-t-[24px] h-14 flex items-center justify-between px-4 shrink-0 shadow-sm relative z-10">
@@ -570,9 +570,12 @@
                                         查看活動與報名 <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
                                     </button>
                                 </div>
-                        
+                        </div>
+                            </div>
+                        </div>
+                        </div>
 
-                        <!-- 訊息 3: 本人回覆 (收到分享的李總) -->
+                        <!-- 訊息 3: 本人回覆 ... (收到分享的李總) -->
                         <div class="flex items-end justify-end mt-2 fade-in">
                             <div class="text-[10px] text-gray-500 mr-2 mb-1">已讀<br>上午 10:45</div>
                             <div class="bg-[#85e04b] text-gray-900 text-[15px] p-3 rounded-2xl shadow-sm relative bubble-right leading-relaxed max-w-[250px]">
@@ -1860,15 +1863,16 @@ function showScreen(screenId, context) {
         }
 
         function showToast(message) {
-            const toast = document.getElementById('toast-notif');
-            document.getElementById('toast-text').innerText = message;
-            toast.classList.remove('opacity-0');
-            toast.classList.add('opacity-100');
-            setTimeout(() => {
-                toast.classList.remove('opacity-100');
-                toast.classList.add('opacity-0');
-            }, 3000);
-        }
+    const toast = document.getElementById('toast-notif');
+    if (!toast) return;
+    document.getElementById('toast-text').innerText = message;
+    toast.classList.remove('opacity-0');
+    toast.classList.add('opacity-100');
+    setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0');
+    }, 3000);
+}
 
         // ==========================================
         // 後台審核與行前通知防呆 Modal 邏輯
