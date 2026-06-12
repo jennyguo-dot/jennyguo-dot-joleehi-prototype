@@ -1696,40 +1696,49 @@
         }
 
         // 用戶端/後台視角切換
-        function switchView(view) {
-            const userView = document.getElementById('user-view');
-            const adminView = document.getElementById('admin-view');
-            const emailView = document.getElementById('email-view');
-            const btnUser = document.getElementById('btn-user-view');
-            const btnAdmin = document.getElementById('btn-admin-view');
-            const btnEmail = document.getElementById('btn-email-view');
+       function switchView(view) {
+    const userView = document.getElementById('user-view');
+    const adminView = document.getElementById('admin-view');
+    const emailView = document.getElementById('email-view');
+    const sharedView = document.getElementById('shared-user-view'); // ← 加這行
+    const btnUser = document.getElementById('btn-user-view');
+    const btnAdmin = document.getElementById('btn-admin-view');
+    const btnEmail = document.getElementById('btn-email-view');
+    const btnShared = document.getElementById('btn-shared-view'); // ← 加這行
 
-            // 隱藏全部
-            userView.classList.add('hidden');
-            adminView.classList.add('hidden');
-            adminView.classList.remove('flex');
-            emailView.classList.add('hidden');
-            emailView.classList.remove('flex');
-            
-            // 重置按鈕樣式
-            btnUser.className = 'px-6 py-2 rounded-full font-bold bg-gray-700 text-gray-300 hover:bg-gray-600 transition';
-            btnAdmin.className = 'px-6 py-2 rounded-full font-bold bg-gray-700 text-gray-300 hover:bg-gray-600 transition';
-            btnEmail.className = 'px-6 py-2 rounded-full font-bold bg-gray-700 text-gray-300 hover:bg-gray-600 transition';
+    // 隱藏全部
+    userView.classList.add('hidden');
+    adminView.classList.add('hidden');
+    adminView.classList.remove('flex');
+    emailView.classList.add('hidden');
+    emailView.classList.remove('flex');
+    sharedView.classList.add('hidden'); // ← 加這行
 
-            if (view === 'user') {
-                userView.classList.remove('hidden');
-                btnUser.className = 'px-6 py-2 rounded-full font-bold bg-blue-600 text-white transition';
-            } else if (view === 'admin') {
-                adminView.classList.remove('hidden');
-                adminView.classList.add('flex');
-                btnAdmin.className = 'px-6 py-2 rounded-full font-bold bg-blue-600 text-white transition';
-            } else if (view === 'email') {
-                emailView.classList.remove('hidden');
-                emailView.classList.add('flex');
-                btnEmail.className = 'px-6 py-2 rounded-full font-bold bg-blue-600 text-white transition';
-                lucide.createIcons(); // 確保信箱內的圖示正確渲染
-            }
-        }
+    // 重置按鈕樣式
+    btnUser.className = 'px-6 py-2 rounded-full font-bold bg-gray-700 text-gray-300 hover:bg-gray-600 transition';
+    btnAdmin.className = 'px-6 py-2 rounded-full font-bold bg-gray-700 text-gray-300 hover:bg-gray-600 transition';
+    btnEmail.className = 'px-6 py-2 rounded-full font-bold bg-gray-700 text-gray-300 hover:bg-gray-600 transition';
+    btnShared.className = 'px-5 py-1.5 text-sm rounded-full font-bold bg-gray-700 text-gray-300 hover:bg-gray-600 transition shrink-0'; // ← 加這行
+
+    if (view === 'user') {
+        userView.classList.remove('hidden');
+        btnUser.className = 'px-6 py-2 rounded-full font-bold bg-blue-600 text-white transition';
+    } else if (view === 'shared') { // ← 整個 else if 都是新增的
+        sharedView.classList.remove('hidden');
+        sharedView.classList.add('flex');
+        btnShared.className = 'px-5 py-1.5 text-sm rounded-full font-bold bg-blue-600 text-white transition shrink-0';
+        lucide.createIcons();
+    } else if (view === 'admin') {
+        adminView.classList.remove('hidden');
+        adminView.classList.add('flex');
+        btnAdmin.className = 'px-6 py-2 rounded-full font-bold bg-blue-600 text-white transition';
+    } else if (view === 'email') {
+        emailView.classList.remove('hidden');
+        emailView.classList.add('flex');
+        btnEmail.className = 'px-6 py-2 rounded-full font-bold bg-blue-600 text-white transition';
+        lucide.createIcons();
+    }
+}
 
         // 後台 Tab 切換
         function showAdminTab(tab) {
