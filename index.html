@@ -79,6 +79,54 @@
 
     <div class="flex-1 relative w-full h-full overflow-hidden">
         
+         <!-- LINE 分享面板 (Share Modal) -->
+                <div id="share-modal" class="absolute fixed-0 z-[100] hidden opacity-0 transition-opacity duration-300 bg-black/60 flex flex-col justify-end">
+                    <div class="flex-1 w-full h-full cursor-pointer" onclick="closeShareModal()"></div>
+                    <div id="share-panel" class="bg-gray-100 w-full h-[80%] rounded-t-[24px] flex flex-col translate-y-full transition-transform duration-300">
+                        <div class="bg-white rounded-t-[24px] h-14 flex items-center justify-between px-4 shrink-0 shadow-sm relative z-10">
+                            <button onclick="closeShareModal()" class="text-gray-500 font-bold p-2"><i data-lucide="x" class="w-5 h-5"></i></button>
+                            <span class="text-gray-800 font-bold text-[15px]">傳送至...</span>
+                            <button id="btn-share-send" onclick="sendShare()" class="text-gray-400 bg-gray-100 text-sm font-bold px-4 py-1.5 rounded-full transition pointer-events-none">分享</button>
+                        </div>
+                        <div class="bg-white px-4 py-2 shrink-0">
+                            <div class="bg-gray-100 rounded-lg flex items-center px-3 py-1.5">
+                                <i data-lucide="search" class="w-4 h-4 text-gray-400 mr-2"></i>
+                                <input type="text" placeholder="搜尋好友或聊天室" class="bg-transparent border-none outline-none text-sm w-full font-medium">
+                            </div>
+                        </div>
+                        <div class="bg-white flex px-4 space-x-6 text-[13px] font-bold text-gray-400 border-b shrink-0">
+                            <div class="text-gray-800 border-b-2 border-gray-800 pb-2 pt-2 cursor-pointer">聊天</div>
+                            <div class="pb-2 pt-2 cursor-pointer hover:text-gray-600 transition">好友</div>
+                            <div class="pb-2 pt-2 cursor-pointer hover:text-gray-600 transition">群組</div>
+                        </div>
+                        <div class="flex-1 overflow-y-auto bg-white p-2">
+                            <!-- 好友列表 -->
+                            <div class="flex items-center p-2 hover:bg-gray-50 cursor-pointer rounded-lg transition" onclick="toggleFriendCheck('f1')">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold mr-3 shrink-0">李</div>
+                                <div class="flex-1 font-bold text-[15px] text-gray-800">李總經理</div>
+                                <input type="checkbox" id="check-f1" class="custom-checkbox pointer-events-none shrink-0">
+                            </div>
+                            <div class="flex items-center p-2 hover:bg-gray-50 cursor-pointer rounded-lg transition" onclick="toggleFriendCheck('f2')">
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-700 font-bold mr-3 shrink-0"><i data-lucide="users" class="w-5 h-5"></i></div>
+                                <div class="flex-1 font-bold text-[15px] text-gray-800">高階主管群 (8)</div>
+                                <input type="checkbox" id="check-f2" class="custom-checkbox pointer-events-none shrink-0">
+                            </div>
+                            <div class="flex items-center p-2 hover:bg-gray-50 cursor-pointer rounded-lg transition" onclick="toggleFriendCheck('f3')">
+                                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-700 font-bold mr-3 shrink-0">陳</div>
+                                <div class="flex-1 font-bold text-[15px] text-gray-800">陳特助</div>
+                                <input type="checkbox" id="check-f3" class="custom-checkbox pointer-events-none shrink-0">
+                            </div>
+                            <div class="flex items-center p-2 hover:bg-gray-50 cursor-pointer rounded-lg transition" onclick="toggleFriendCheck('f4')">
+                                <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-700 font-bold mr-3 shrink-0">林</div>
+                                <div class="flex-1 font-bold text-[15px] text-gray-800">林財務長</div>
+                                <input type="checkbox" id="check-f4" class="custom-checkbox pointer-events-none shrink-0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
         <!-- ========================================== -->
         <!-- 用戶端 (手機視角) 容器 -->
         <!-- ========================================== -->
@@ -448,54 +496,7 @@
                     </div>
                 </div>
 
-                <!-- LINE 分享面板 (Share Modal) -->
-                <div id="share-modal" class="absolute inset-0 z-[100] hidden opacity-0 transition-opacity duration-300 bg-black/60 flex flex-col justify-end">
-                    <div class="flex-1 w-full h-full cursor-pointer" onclick="closeShareModal()"></div>
-                    <div id="share-panel" class="bg-gray-100 w-full h-[80%] rounded-t-[24px] flex flex-col translate-y-full transition-transform duration-300">
-                        <div class="bg-white rounded-t-[24px] h-14 flex items-center justify-between px-4 shrink-0 shadow-sm relative z-10">
-                            <button onclick="closeShareModal()" class="text-gray-500 font-bold p-2"><i data-lucide="x" class="w-5 h-5"></i></button>
-                            <span class="text-gray-800 font-bold text-[15px]">傳送至...</span>
-                            <button id="btn-share-send" onclick="sendShare()" class="text-gray-400 bg-gray-100 text-sm font-bold px-4 py-1.5 rounded-full transition pointer-events-none">分享</button>
-                        </div>
-                        <div class="bg-white px-4 py-2 shrink-0">
-                            <div class="bg-gray-100 rounded-lg flex items-center px-3 py-1.5">
-                                <i data-lucide="search" class="w-4 h-4 text-gray-400 mr-2"></i>
-                                <input type="text" placeholder="搜尋好友或聊天室" class="bg-transparent border-none outline-none text-sm w-full font-medium">
-                            </div>
-                        </div>
-                        <div class="bg-white flex px-4 space-x-6 text-[13px] font-bold text-gray-400 border-b shrink-0">
-                            <div class="text-gray-800 border-b-2 border-gray-800 pb-2 pt-2 cursor-pointer">聊天</div>
-                            <div class="pb-2 pt-2 cursor-pointer hover:text-gray-600 transition">好友</div>
-                            <div class="pb-2 pt-2 cursor-pointer hover:text-gray-600 transition">群組</div>
-                        </div>
-                        <div class="flex-1 overflow-y-auto bg-white p-2">
-                            <!-- 好友列表 -->
-                            <div class="flex items-center p-2 hover:bg-gray-50 cursor-pointer rounded-lg transition" onclick="toggleFriendCheck('f1')">
-                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold mr-3 shrink-0">李</div>
-                                <div class="flex-1 font-bold text-[15px] text-gray-800">李總經理</div>
-                                <input type="checkbox" id="check-f1" class="custom-checkbox pointer-events-none shrink-0">
-                            </div>
-                            <div class="flex items-center p-2 hover:bg-gray-50 cursor-pointer rounded-lg transition" onclick="toggleFriendCheck('f2')">
-                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-700 font-bold mr-3 shrink-0"><i data-lucide="users" class="w-5 h-5"></i></div>
-                                <div class="flex-1 font-bold text-[15px] text-gray-800">高階主管群 (8)</div>
-                                <input type="checkbox" id="check-f2" class="custom-checkbox pointer-events-none shrink-0">
-                            </div>
-                            <div class="flex items-center p-2 hover:bg-gray-50 cursor-pointer rounded-lg transition" onclick="toggleFriendCheck('f3')">
-                                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-700 font-bold mr-3 shrink-0">陳</div>
-                                <div class="flex-1 font-bold text-[15px] text-gray-800">陳特助</div>
-                                <input type="checkbox" id="check-f3" class="custom-checkbox pointer-events-none shrink-0">
-                            </div>
-                            <div class="flex items-center p-2 hover:bg-gray-50 cursor-pointer rounded-lg transition" onclick="toggleFriendCheck('f4')">
-                                <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-700 font-bold mr-3 shrink-0">林</div>
-                                <div class="flex-1 font-bold text-[15px] text-gray-800">林財務長</div>
-                                <input type="checkbox" id="check-f4" class="custom-checkbox pointer-events-none shrink-0">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+               
         <!-- ========================================== -->
         <!-- 被分享者端 (手機視角) 容器 : 好友對話視窗 -->
         <!-- ========================================== -->
@@ -600,13 +601,7 @@
                     </div>
                     
                     <div class="flex-1 overflow-y-auto p-4 pb-24">
-                        <!-- 好友推薦 Banner -->
-                        <div class="bg-[#fdf7ef] border border-orange-100 rounded-xl p-3 mb-4 flex items-center shadow-sm">
-                            <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mr-3 shrink-0 text-[#f28c00]">
-                                <i data-lucide="gift" class="w-4 h-4"></i>
-                            </div>
-                            
-                        </div>
+                
 
                         <h2 class="text-xl font-bold text-[#355487] mb-4 px-1 flex items-center">
                             <div class="w-1.5 h-6 bg-[#f28c00] rounded-full mr-2"></div>外資精選聯誼會
