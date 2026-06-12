@@ -1677,7 +1677,7 @@
         lucide.createIcons();
 
         // 畫面切換邏輯 (手機端)
-       function showScreen(screenId, context) {
+function showScreen(screenId, context) {
     let screens;
     if (context === 'shared') {
         screens = ['shared-screen1', 'shared-screen2', 'shared-screen3'];
@@ -1691,11 +1691,7 @@
         if (id === screenId) {
             el.style.transform = 'translateY(0)';
         } else {
-            if (screens.indexOf(screenId) > screens.indexOf(id)) {
-                // 目前畫面在前，不動
-            } else {
-                el.style.transform = 'translateY(100%)';
-            }
+            el.style.transform = 'translateY(100%)';
         }
     });
 }
