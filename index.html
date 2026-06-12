@@ -1677,23 +1677,28 @@
         lucide.createIcons();
 
         // 畫面切換邏輯 (手機端)
-        function showScreen(screenId) {
-            const screens = ['screen1', 'screen2', 'screen4', 'screen5'];
-            screens.forEach(id => {
-                const el = document.getElementById(id);
-                if (id === screenId) {
-                    el.style.transform = 'translateY(0)';
-                } else {
-                    if (screenId === 'screen1') {
-                        if (id !== 'screen1') el.style.transform = 'translateY(100%)';
-                    } else {
-                        if (screens.indexOf(id) > screens.indexOf(screenId)) {
-                            el.style.transform = 'translateY(100%)';
-                        }
-                    }
-                }
-            });
+       function showScreen(screenId, context) {
+    let screens;
+    if (context === 'shared') {
+        screens = ['shared-screen1', 'shared-screen2', 'shared-screen3'];
+    } else {
+        screens = ['screen1', 'screen2', 'screen4', 'screen5'];
+    }
+
+    screens.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (id === screenId) {
+            el.style.transform = 'translateY(0)';
+        } else {
+            if (screens.indexOf(screenId) > screens.indexOf(id)) {
+                // 目前畫面在前，不動
+            } else {
+                el.style.transform = 'translateY(100%)';
+            }
         }
+    });
+}
 
         // 用戶端/後台視角切換
        function switchView(view) {
@@ -2047,10 +2052,13 @@
             lucide.createIcons();
         }
 
-        function resetApp() {
-            showScreen('screen1');
-        }
-
+        function resetApp(context) {
+    if (context === 'shared') {
+        showScreen('shared-screen1', 'shared');
+    } else {
+        showScreen('screen1');
+    }
+}
         // 初始化狀態
         showScreen('screen1');
     </script>
