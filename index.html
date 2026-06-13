@@ -10,50 +10,27 @@
         body { font-family: 'Noto Sans TC', sans-serif; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* 動畫效果 */
         .fade-in { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
         .slide-down { animation: slideDown 0.3s ease-out forwards; transform-origin: top; }
         @keyframes slideDown { from { transform: scaleY(0); opacity: 0; } to { transform: scaleY(1); opacity: 1; } }
-
-        /* 圖文選單斜角 */
         .diagonal-cut {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 0;
-            height: 0;
+            position: absolute; bottom: 0; right: 0;
+            width: 0; height: 0;
             border-bottom: 24px solid white;
             border-left: 24px solid transparent;
         }
-
-        /* 自訂核取方塊樣式 (復刻 LINE 綠色打勾) */
         .custom-checkbox {
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border: 2px solid #ddd;
-            border-radius: 50%;
-            outline: none;
-            cursor: pointer;
-            position: relative;
+            appearance: none; width: 24px; height: 24px;
+            border: 2px solid #ddd; border-radius: 50%;
+            outline: none; cursor: pointer; position: relative;
             transition: all 0.2s ease;
         }
-        .custom-checkbox:checked {
-            background-color: #06C755;
-            border-color: #06C755;
-        }
+        .custom-checkbox:checked { background-color: #06C755; border-color: #06C755; }
         .custom-checkbox:checked::after {
-            content: '';
-            position: absolute;
-            top: 5px;
-            left: 8px;
-            width: 6px;
-            height: 12px;
-            border: solid white;
-            border-width: 0 2px 2px 0;
+            content: ''; position: absolute;
+            top: 5px; left: 8px; width: 6px; height: 12px;
+            border: solid white; border-width: 0 2px 2px 0;
             transform: rotate(45deg);
         }
     </style>
@@ -61,12 +38,12 @@
 </head>
 <body class="bg-gray-100 h-screen w-screen overflow-hidden flex flex-col">
 
-    <!-- 頂部視角切換導覽列 (Demo 用) -->
+    <!-- 頂部視角切換導覽列 -->
     <div class="bg-gray-900 text-white h-14 flex items-center justify-center space-x-4 shadow-md z-[200] shrink-0">
         <button onclick="switchView('user')" id="btn-user-view" class="px-6 py-2 rounded-full font-bold bg-blue-600 text-white transition">
             📱 用戶端 (LINE 視角)
         </button>
-         <button onclick="switchView('shared')" id="btn-shared-view" class="px-5 py-1.5 text-sm rounded-full font-bold bg-gray-700 text-gray-300 hover:bg-gray-600 transition shrink-0">
+        <button onclick="switchView('shared')" id="btn-shared-view" class="px-5 py-1.5 text-sm rounded-full font-bold bg-gray-700 text-gray-300 hover:bg-gray-600 transition shrink-0">
             💬 被分享者 (LINE)
         </button>
         <button onclick="switchView('email')" id="btn-email-view" class="px-6 py-2 rounded-full font-bold bg-gray-700 text-gray-300 hover:bg-gray-600 transition">
@@ -79,62 +56,69 @@
 
     <div class="flex-1 relative w-full h-full overflow-hidden">
         
-         <!-- LINE 分享面板 (Share Modal) -->
-                <div id="share-modal" class="fixed inset-0 z-[100] hidden opacity-0 transition-opacity duration-300 bg-black/60 flex flex-col justify-end">
-                    <div class="flex-1 w-full h-full cursor-pointer" onclick="closeShareModal()"></div>
-                    <div id="share-panel" class="bg-gray-100 w-full h-[80%] rounded-t-[24px] flex flex-col translate-y-full transition-transform duration-300">
-                        <div class="bg-white rounded-t-[24px] h-14 flex items-center justify-between px-4 shrink-0 shadow-sm relative z-10">
-                            <button onclick="closeShareModal()" class="text-gray-500 font-bold p-2"><i data-lucide="x" class="w-5 h-5"></i></button>
-                            <span class="text-gray-800 font-bold text-[15px]">傳送至...</span>
-                            <button id="btn-share-send" onclick="sendShare()" class="text-gray-400 bg-gray-100 text-sm font-bold px-4 py-1.5 rounded-full transition pointer-events-none">分享</button>
-                        </div>
-                        <div class="bg-white px-4 py-2 shrink-0">
-                            <div class="bg-gray-100 rounded-lg flex items-center px-3 py-1.5">
-                                <i data-lucide="search" class="w-4 h-4 text-gray-400 mr-2"></i>
-                                <input type="text" placeholder="搜尋好友或聊天室" class="bg-transparent border-none outline-none text-sm w-full font-medium">
-                            </div>
-                        </div>
-                        <div class="bg-white flex px-4 space-x-6 text-[13px] font-bold text-gray-400 border-b shrink-0">
-                            <div class="text-gray-800 border-b-2 border-gray-800 pb-2 pt-2 cursor-pointer">聊天</div>
-                            <div class="pb-2 pt-2 cursor-pointer hover:text-gray-600 transition">好友</div>
-                            <div class="pb-2 pt-2 cursor-pointer hover:text-gray-600 transition">群組</div>
-                        </div>
-                        <div class="flex-1 overflow-y-auto bg-white p-2">
-                            <!-- 好友列表 -->
-                            <div class="flex items-center p-2 hover:bg-gray-50 cursor-pointer rounded-lg transition" onclick="toggleFriendCheck('f1')">
-                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold mr-3 shrink-0">李</div>
-                                <div class="flex-1 font-bold text-[15px] text-gray-800">李總經理</div>
-                                <input type="checkbox" id="check-f1" class="custom-checkbox pointer-events-none shrink-0">
-                            </div>
-                            <div class="flex items-center p-2 hover:bg-gray-50 cursor-pointer rounded-lg transition" onclick="toggleFriendCheck('f2')">
-                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-700 font-bold mr-3 shrink-0"><i data-lucide="users" class="w-5 h-5"></i></div>
-                                <div class="flex-1 font-bold text-[15px] text-gray-800">高階主管群 (8)</div>
-                                <input type="checkbox" id="check-f2" class="custom-checkbox pointer-events-none shrink-0">
-                            </div>
-                            <div class="flex items-center p-2 hover:bg-gray-50 cursor-pointer rounded-lg transition" onclick="toggleFriendCheck('f3')">
-                                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-700 font-bold mr-3 shrink-0">陳</div>
-                                <div class="flex-1 font-bold text-[15px] text-gray-800">陳特助</div>
-                                <input type="checkbox" id="check-f3" class="custom-checkbox pointer-events-none shrink-0">
-                            </div>
-                            <div class="flex items-center p-2 hover:bg-gray-50 cursor-pointer rounded-lg transition" onclick="toggleFriendCheck('f4')">
-                                <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-700 font-bold mr-3 shrink-0">林</div>
-                                <div class="flex-1 font-bold text-[15px] text-gray-800">林財務長</div>
-                                <input type="checkbox" id="check-f4" class="custom-checkbox pointer-events-none shrink-0">
-                            </div>
+        <!-- ========================================== -->
+        <!-- LINE 分享面板 (Share Modal) - 已修正對齊手機尺寸 -->
+        <!-- ========================================== -->
+        <div id="share-modal" class="absolute inset-0 z-[999] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center py-4">
+            <!-- 滿版黑色半透明背景 -->
+            <div class="absolute inset-0 bg-black/60 cursor-pointer" onclick="closeShareModal()"></div>
+            
+            <!-- 模擬手機外框限制，讓 Modal 只在這個區域內升起 -->
+            <div class="w-full max-w-[430px] h-full max-h-[932px] relative overflow-hidden sm:rounded-[40px] sm:border-[8px] sm:border-transparent pointer-events-none flex flex-col justify-end">
+                
+                <!-- 實際會滑動的面板 -->
+                <div id="share-panel" class="bg-gray-100 w-full h-[80%] rounded-t-[24px] flex flex-col translate-y-full transition-transform duration-300 pointer-events-auto shadow-2xl relative z-10">
+                    <div class="bg-white rounded-t-[24px] h-14 flex items-center justify-between px-4 shrink-0 shadow-sm relative z-10">
+                        <button onclick="closeShareModal()" class="text-gray-500 font-bold p-2"><i data-lucide="x" class="w-5 h-5"></i></button>
+                        <span class="text-gray-800 font-bold text-[15px]">傳送至...</span>
+                        <button id="btn-share-send" onclick="sendShare()" class="text-gray-400 bg-gray-100 text-sm font-bold px-4 py-1.5 rounded-full transition pointer-events-none">分享</button>
+                    </div>
+                    <div class="bg-white px-4 py-2 shrink-0">
+                        <div class="bg-gray-100 rounded-lg flex items-center px-3 py-1.5">
+                            <i data-lucide="search" class="w-4 h-4 text-gray-400 mr-2"></i>
+                            <input type="text" placeholder="搜尋好友或聊天室" class="bg-transparent border-none outline-none text-sm w-full font-medium">
                         </div>
                     </div>
-               
-        
-    
+                    <div class="bg-white flex px-4 space-x-6 text-[13px] font-bold text-gray-400 border-b shrink-0">
+                        <div class="text-gray-800 border-b-2 border-gray-800 pb-2 pt-2 cursor-pointer">聊天</div>
+                        <div class="pb-2 pt-2 cursor-pointer hover:text-gray-600 transition">好友</div>
+                        <div class="pb-2 pt-2 cursor-pointer hover:text-gray-600 transition">群組</div>
+                    </div>
+                    <div class="flex-1 overflow-y-auto bg-white p-2 hide-scrollbar">
+                        <div class="flex items-center p-2 hover:bg-gray-50 cursor-pointer rounded-lg transition" onclick="toggleFriendCheck('f1')">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold mr-3 shrink-0">李</div>
+                            <div class="flex-1 font-bold text-[15px] text-gray-800">李總經理</div>
+                            <input type="checkbox" id="check-f1" class="custom-checkbox pointer-events-none shrink-0">
+                        </div>
+                        <div class="flex items-center p-2 hover:bg-gray-50 cursor-pointer rounded-lg transition" onclick="toggleFriendCheck('f2')">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-700 font-bold mr-3 shrink-0"><i data-lucide="users" class="w-5 h-5"></i></div>
+                            <div class="flex-1 font-bold text-[15px] text-gray-800">高階主管群 (8)</div>
+                            <input type="checkbox" id="check-f2" class="custom-checkbox pointer-events-none shrink-0">
+                        </div>
+                        <div class="flex items-center p-2 hover:bg-gray-50 cursor-pointer rounded-lg transition" onclick="toggleFriendCheck('f3')">
+                            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-700 font-bold mr-3 shrink-0">陳</div>
+                            <div class="flex-1 font-bold text-[15px] text-gray-800">陳特助</div>
+                            <input type="checkbox" id="check-f3" class="custom-checkbox pointer-events-none shrink-0">
+                        </div>
+                        <div class="flex items-center p-2 hover:bg-gray-50 cursor-pointer rounded-lg transition" onclick="toggleFriendCheck('f4')">
+                            <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-700 font-bold mr-3 shrink-0">林</div>
+                            <div class="flex-1 font-bold text-[15px] text-gray-800">林財務長</div>
+                            <input type="checkbox" id="check-f4" class="custom-checkbox pointer-events-none shrink-0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- share-modal 結束 -->
+
         <!-- ========================================== -->
         <!-- 用戶端 (手機視角) 容器 -->
         <!-- ========================================== -->
         <div id="user-view" class="absolute inset-0 flex items-center justify-center bg-gray-200 py-4">
-            <!-- 模擬手機外框 (精準 iPhone 14/15 Pro Max 尺寸 430x932) -->
             <div class="w-full max-w-[430px] h-full max-h-[932px] bg-white shadow-2xl relative overflow-hidden sm:rounded-[40px] sm:border-[8px] sm:border-gray-800 flex flex-col mx-auto">
-                
-                <!-- 狀態列 (iPhone 樣式) -->
-                <div class="h-12 w-full bg-white flex justify-between items-center px-6 text-xs font-medium z-50 shrink-0 z-[60]">
+
+                <!-- 狀態列 -->
+                <div class="h-12 w-full bg-white flex justify-between items-center px-6 text-xs font-medium z-[60] shrink-0">
                     <span>9:41</span>
                     <div class="flex space-x-2 items-center">
                         <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
@@ -143,15 +127,14 @@
                     </div>
                 </div>
 
-                <!-- Toast 通知 (取代 alert) -->
+                <!-- Toast 通知 -->
                 <div id="toast-notif" class="absolute top-16 left-1/2 transform -translate-x-1/2 bg-gray-900/95 text-white px-5 py-3 rounded-full text-sm font-bold shadow-xl z-[80] flex items-center space-x-2 transition-all duration-300 opacity-0 pointer-events-none">
                     <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i>
                     <span id="toast-text">提示訊息</span>
                 </div>
 
-                <!-- Screen 1: LINE OA 官方帳號畫面 -->
+                <!-- Screen 1: LINE OA -->
                 <div id="screen1" class="absolute inset-0 top-12 flex flex-col bg-[#eaf4f6] z-10 transition-transform duration-300">
-                    <!-- LINE Header -->
                     <div class="h-14 bg-white flex items-center px-4 border-b border-gray-200 shrink-0 shadow-sm">
                         <i data-lucide="chevron-left" class="w-6 h-6 text-gray-600"></i>
                         <span class="ml-1 text-xl text-gray-600 font-bold">99+</span>
@@ -166,41 +149,34 @@
                         </div>
                     </div>
 
-                    <!-- 聊天室內容 -->
                     <div id="line-chatbox" class="flex-1 overflow-y-auto px-4 pt-4 pb-[320px] hide-scrollbar relative scroll-smooth">
                         <div class="w-full rounded-2xl overflow-hidden relative shadow-md bg-gradient-to-br from-[#400e70] via-[#2a084c] to-[#120322] aspect-[4/5] flex flex-col items-center justify-center p-6 text-center">
                             <div class="absolute top-1/4 left-1/4 w-1 h-1 bg-white rounded-full shadow-[0_0_10px_white]"></div>
                             <div class="absolute bottom-1/3 left-1/5 w-1 h-1 bg-white rounded-full shadow-[0_0_8px_white]"></div>
                             <div class="absolute top-1/3 right-1/4 w-1 h-1 bg-white rounded-full shadow-[0_0_12px_white]"></div>
-
                             <div class="bg-gradient-to-r from-[#f18e1c] to-[#e66c17] text-white font-bold py-1 px-4 rounded-full self-start mb-6 text-sm shadow-md flex items-center">
                                 <span class="text-lg font-black italic mr-1">UltraHigh</span> 系列文章
                             </div>
                             <h2 class="text-white text-[28px] font-bold leading-tight mb-2 tracking-wide text-left w-full">從代工到多元控股：</h2>
                             <h2 class="text-white text-[28px] font-bold leading-tight mb-2 tracking-wide text-left w-full">企業變大後，</h2>
                             <h2 class="text-white text-[28px] font-bold leading-tight mb-8 tracking-wide text-left w-full">為何原本成功的方法<br>開始失效？</h2>
-                            
                             <button class="mt-auto border border-[#e66c17] text-[#e66c17] px-8 py-2.5 rounded-full font-bold bg-black/30 hover:bg-[#e66c17]/20 transition">
                                 點擊查看完整文章
                             </button>
                         </div>
                         <div class="text-right text-xs text-gray-400 mt-2 mb-4">清晨 7:25</div>
 
-                        <!-- 簽到 QR Code 訊息 (預設隱藏，審核通過後觸發顯示) -->
                         <div id="qr-message" class="hidden flex flex-col items-start mt-2 fade-in pb-4">
                             <div class="flex items-end">
                                 <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold shrink-0 mr-2 border border-blue-200 shadow-sm">董</div>
                                 <div class="bg-white rounded-2xl p-5 shadow-sm max-w-[320px] border border-gray-100 relative">
                                     <div class="absolute -left-2 bottom-3 w-4 h-4 bg-white transform rotate-45 border-l border-b border-gray-100"></div>
                                     <h4 class="font-bold text-[#355487] mb-3 text-[16px] border-b border-gray-100 pb-2">🎉 報名成功！</h4>
-                                    
-                                    <!-- 新增：活動資訊 -->
                                     <div class="mb-4 space-y-1.5 text-[13px] text-gray-600 leading-relaxed">
                                         <p><span class="font-bold text-gray-800">📌 活動：</span>外資精選聯誼會 (中型企業全球化佈局)</p>
                                         <p><span class="font-bold text-gray-800">⏰ 時間：</span>2026/06/05 14:00</p>
                                         <p><span class="font-bold text-gray-800">📍 地點：</span>台北 101 會議中心</p>
                                     </div>
-                                    
                                     <p class="text-[12px] text-blue-600 font-bold mb-2 text-center">請於活動當天出示下方 QR Code 報到</p>
                                     <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 flex justify-center mb-1">
                                         <i data-lucide="qr-code" class="w-32 h-32 text-gray-800 stroke-[1.5]"></i>
@@ -211,9 +187,8 @@
                         </div>
                     </div>
 
-                    <!-- 圖文選單 (Rich Menu) -->
+                    <!-- 圖文選單 -->
                     <div class="absolute bottom-0 w-full bg-white flex flex-col shadow-[0_-5px_15px_rgba(0,0,0,0.1)] z-20">
-                        <!-- 圖文選單內容區塊 (預設展開，透過 JS 控制 max-height 收放) -->
                         <div id="rich-menu-content" class="transition-[max-height] duration-300 ease-in-out overflow-hidden max-h-[300px]">
                             <div class="h-[140px] bg-gradient-to-r from-[#7a1805] via-[#bd290a] to-[#d63a13] relative overflow-hidden flex flex-col justify-center px-6">
                                 <div class="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-white/20 to-transparent skew-x-[-20deg] translate-x-10"></div>
@@ -231,7 +206,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="h-[120px] bg-white flex">
                                 <div class="flex-1 bg-[#6a1d1e] border-r border-white/20 flex flex-col items-center justify-center relative cursor-pointer hover:brightness-110 transition">
                                     <i data-lucide="book-open" class="w-10 h-10 text-white/80 mb-2 stroke-[1.5]"></i>
@@ -243,7 +217,6 @@
                                     <span class="text-white font-bold text-sm tracking-widest">最新活動</span>
                                     <div class="diagonal-cut"></div>
                                 </div>
-                                <!-- 講座課程 (點擊進入系統) -->
                                 <div onclick="showScreen('screen2')" class="flex-1 bg-[#193a62] flex flex-col items-center justify-center relative cursor-pointer hover:brightness-110 transition group">
                                     <i data-lucide="award" class="w-10 h-10 text-white/80 mb-2 stroke-[1.5] group-hover:scale-110 transition-transform"></i>
                                     <span class="text-white font-bold text-sm tracking-widest">講座課程</span>
@@ -251,8 +224,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- 圖文選單底部控制列 -->
                         <div onclick="toggleRichMenu()" class="h-12 bg-[#93d2df] flex items-center px-4 cursor-pointer hover:bg-[#82c1ce] transition">
                             <i data-lucide="keyboard" class="w-6 h-6 text-gray-700"></i>
                             <div id="rich-menu-toggle-text" class="flex-1 text-center text-gray-800 text-[15px] font-medium tracking-wide">
@@ -261,23 +232,22 @@
                         </div>
                     </div>
                 </div>
+                <!-- screen1 結束 -->
 
-                <!-- Screen 2: 活動列表 (復刻米色背景與藍色標籤) -->
+                <!-- Screen 2: 活動列表 -->
                 <div id="screen2" class="absolute inset-0 top-12 flex flex-col bg-[#fdf7ef] z-20 translate-y-full transition-transform duration-300">
                     <div class="h-14 bg-white flex items-center justify-between px-4 border-b shrink-0 shadow-sm relative z-10">
                         <div class="w-6"></div>
                         <h1 class="text-sm font-bold text-gray-800 truncate absolute w-full text-center left-0 z-0">揪里嗨 - 董事學會報名系統</h1>
                         <button onclick="showScreen('screen1')" class="p-2 z-10"><i data-lucide="x" class="w-6 h-6 text-gray-600"></i></button>
                     </div>
-                    
                     <div class="flex-1 overflow-y-auto px-4 py-5 pb-20">
-                        <!-- 進行中活動卡片 1 -->
+                        <!-- 活動卡片 1 -->
                         <div class="bg-white rounded-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.05)] border border-gray-100 p-5 mb-5 relative">
                             <div class="flex justify-between items-start mb-4">
                                 <h3 class="text-xl font-bold text-[#355487] leading-snug tracking-wide pr-3">外資精選聯誼會<br>(中型企業全球化佈局)</h3>
                                 <span class="bg-[#fdf3e3] text-[#8b7255] text-xs font-bold px-3 py-1.5 rounded-full shrink-0">免費</span>
                             </div>
-                            
                             <div class="space-y-2.5 text-[15px] text-gray-700 mb-5 font-medium tracking-wide">
                                 <div class="flex items-start">
                                     <span class="w-6 h-6 rounded bg-[#355487] text-white flex items-center justify-center mr-3 text-[11px] font-bold shrink-0 mt-0.5">起</span>
@@ -292,25 +262,19 @@
                                     <span class="leading-relaxed">台北 101 會議中心<br>(信義路五段7號36樓)</span>
                                 </div>
                             </div>
-
                             <div class="flex space-x-3 mt-2">
-                                <!-- 分享按鈕移至右側 -->
-                                <button onclick="showScreen('screen4')" class="flex-[2] bg-[#f28c00] text-white py-3 rounded-xl font-bold text-lg hover:bg-orange-600 transition shadow-sm text-center">
-                                    點我報名
-                                </button>
+                                <button onclick="showScreen('screen4')" class="flex-[2] bg-[#f28c00] text-white py-3 rounded-xl font-bold text-lg hover:bg-orange-600 transition shadow-sm text-center">點我報名</button>
                                 <button onclick="openShareModal()" class="flex-1 bg-[#06C755] text-white py-3 rounded-xl font-bold text-sm hover:bg-[#05b34c] transition shadow-sm flex items-center justify-center">
                                     <i data-lucide="message-circle" class="w-5 h-5 mr-1.5"></i> 分享
                                 </button>
                             </div>
                         </div>
-
-                        <!-- 進行中活動卡片 2 -->
+                        <!-- 活動卡片 2 -->
                         <div class="bg-white rounded-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.05)] border border-gray-100 p-5 mb-5 relative">
                             <div class="flex justify-between items-start mb-4">
                                 <h3 class="text-xl font-bold text-[#355487] leading-snug tracking-wide pr-3">2026 台灣董事學會<br>15 週年年會</h3>
                                 <span class="bg-[#fdf3e3] text-[#8b7255] text-xs font-bold px-3 py-1.5 rounded-full shrink-0">免費</span>
                             </div>
-                            
                             <div class="space-y-2.5 text-[15px] text-gray-700 mb-5 font-medium tracking-wide">
                                 <div class="flex items-start">
                                     <span class="w-6 h-6 rounded bg-[#355487] text-white flex items-center justify-center mr-3 text-[11px] font-bold shrink-0 mt-0.5">起</span>
@@ -325,19 +289,14 @@
                                     <span class="leading-relaxed">台北晶華酒店</span>
                                 </div>
                             </div>
-
                             <div class="flex space-x-3 mt-2">
-                                <button onclick="showScreen('screen4')" class="flex-[2] bg-[#f28c00] text-white py-3 rounded-xl font-bold text-lg hover:bg-orange-600 transition shadow-sm text-center">
-                                    點我報名
-                                </button>
+                                <button onclick="showScreen('screen4')" class="flex-[2] bg-[#f28c00] text-white py-3 rounded-xl font-bold text-lg hover:bg-orange-600 transition shadow-sm text-center">點我報名</button>
                                 <button onclick="openShareModal()" class="flex-1 bg-[#06C755] text-white py-3 rounded-xl font-bold text-sm hover:bg-[#05b34c] transition shadow-sm flex items-center justify-center">
                                     <i data-lucide="message-circle" class="w-5 h-5 mr-1.5"></i> 分享
                                 </button>
                             </div>
                         </div>
                     </div>
-
-                    <!-- 底部導覽列 -->
                     <div class="absolute bottom-0 w-full h-[68px] bg-white border-t border-gray-200 flex items-center shadow-[0_-2px_10px_rgba(0,0,0,0.03)] z-10">
                         <div class="flex-1 flex flex-col items-center justify-center text-[#355487] cursor-pointer border-r border-gray-100">
                             <i data-lucide="file-search" class="w-6 h-6 mb-1 stroke-[2]"></i>
@@ -349,6 +308,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- screen2 結束 -->
 
                 <!-- Screen 4: 填寫報名表 -->
                 <div id="screen4" class="absolute inset-0 top-12 flex flex-col bg-gray-50 z-30 translate-y-full transition-transform duration-300">
@@ -357,35 +317,26 @@
                         <h1 class="text-sm font-bold text-gray-800 truncate absolute w-full text-center left-0 z-0">填寫報名表</h1>
                         <button onclick="showScreen('screen1')" class="p-2 z-10"><i data-lucide="x" class="w-6 h-6 text-gray-600"></i></button>
                     </div>
-                    
                     <div class="flex-1 overflow-y-auto p-4 pb-24">
                         <h2 class="text-xl font-bold text-[#355487] mb-4 px-1 flex items-center">
-                            <div class="w-1.5 h-6 bg-[#f28c00] rounded-full mr-2"></div>
-                            外資精選聯誼會
+                            <div class="w-1.5 h-6 bg-[#f28c00] rounded-full mr-2"></div>外資精選聯誼會
                         </h2>
-                        
-                        <!-- 活動說明與注意事項 -->
                         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 mb-6 text-sm">
                             <h3 class="font-bold text-gray-800 mb-2 border-b pb-2">📋 活動說明</h3>
                             <p class="text-gray-600 mb-4 leading-relaxed">
                                 聚焦企業在成長關鍵期的「策略發展」與「價值提升」。透過閉門交流與實戰經驗分享，協助企業突破盲點。<br>
                                 <span class="text-[#f28c00] font-bold">適合對象：受邀企業之董事長、總經理及 C-level 高階主管。</span>
                             </p>
-                            
                             <div class="border-2 border-dashed border-red-300 rounded-xl p-4 bg-red-50 relative">
                                 <h3 class="text-red-500 font-bold text-sm mb-2">注意事項：</h3>
                                 <div class="text-red-500 text-[13px] leading-relaxed space-y-1">
                                     <p><span class="font-bold">時間：</span>06/05(三) 14:00 - 08/25(二) 17:00</p>
                                     <p><span class="font-bold">對象：</span>審核制 (限額 30 名)</p>
                                     <p><span class="font-bold">費用：</span>免費 (由主辦單位補助)</p>
-                                    <p class="mt-2 font-bold flex items-start text-red-600">
-                                        <span class="mr-1">❗</span> 送出表單後，需等待主辦方審核，審核通過將發送正式 QR Code 報到憑證。
-                                    </p>
+                                    <p class="mt-2 font-bold flex items-start text-red-600"><span class="mr-1">❗</span> 送出表單後，需等待主辦方審核，審核通過將發送正式 QR Code 報到憑證。</p>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- 參加者表單 -->
                         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
                             <div class="bg-gray-50 px-4 py-3 border-b flex justify-between items-center">
                                 <h3 class="font-bold text-[#355487] flex items-center"><i data-lucide="chevron-up" class="w-4 h-4 mr-1"></i> 參加貴賓資訊</h3>
@@ -411,8 +362,6 @@
                                     <label class="block text-sm font-bold text-gray-700 mb-1">職稱 <span class="text-red-500">*</span></label>
                                     <input type="text" value="董事長" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#f28c00] focus:border-transparent outline-none transition">
                                 </div>
-
-                                <!-- 代填人機制切換 -->
                                 <div class="pt-4 border-t mt-4">
                                     <label class="block text-sm font-bold text-gray-700 mb-3">此報名表是否為貴賓本人親自填寫？</label>
                                     <div class="flex space-x-4">
@@ -420,8 +369,6 @@
                                         <button id="btn-proxy" onclick="toggleProxy(true)" class="flex-1 py-2 rounded-lg border-2 border-gray-300 text-gray-600 font-bold hover:bg-gray-50 transition">否，代填報名</button>
                                     </div>
                                 </div>
-
-                                <!-- 代填人專屬欄位 -->
                                 <div id="proxy-fields" class="hidden bg-[#fdf7ef] p-4 rounded-xl border border-orange-100 mt-4 space-y-4">
                                     <h4 class="font-bold text-[#f28c00] text-sm flex items-center mb-2"><i data-lucide="user-check" class="w-4 h-4 mr-1"></i> 代填聯絡人資訊</h4>
                                     <div>
@@ -444,15 +391,12 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- 底部送出 Bar -->
                     <div class="absolute bottom-0 w-full bg-[#355487] h-[68px] flex items-center px-6 justify-between shadow-[0_-5px_15px_rgba(0,0,0,0.1)] z-20">
                         <span class="text-white font-medium text-lg">共 1 人</span>
-                        <button onclick="submitForm()" class="bg-[#f28c00] text-white px-8 py-2.5 rounded-full font-bold shadow-md hover:bg-orange-600 hover:scale-105 transition-transform">
-                            送出
-                        </button>
+                        <button onclick="submitForm()" class="bg-[#f28c00] text-white px-8 py-2.5 rounded-full font-bold shadow-md hover:bg-orange-600 hover:scale-105 transition-transform">送出</button>
                     </div>
                 </div>
+                <!-- screen4 結束 -->
 
                 <!-- Screen 5: 送出成功 -->
                 <div id="screen5" class="absolute inset-0 top-12 flex flex-col bg-[#f0f2f5] z-40 translate-y-full transition-transform duration-300">
@@ -461,32 +405,24 @@
                         <h1 class="text-sm font-bold text-gray-800 truncate absolute w-full text-center left-0 z-0">揪里嗨 - 董事學會報名</h1>
                         <button onclick="resetApp()" class="p-2 z-10"><i data-lucide="x" class="w-6 h-6 text-gray-600"></i></button>
                     </div>
-                    
                     <div class="flex-1 overflow-y-auto bg-gray-50 flex flex-col items-center pt-8 px-4 pb-12 hide-scrollbar">
-                        <!-- 橘色 Banner -->
                         <div class="w-full h-32 bg-[#f28c00] rounded-xl flex items-center justify-center mt-2 shadow-sm relative overflow-hidden">
                             <h2 class="text-white text-3xl font-black italic tracking-widest relative z-10" style="font-family: 'Comic Sans MS', cursive;">揪里嗨 <span class="text-xl ml-2 font-bold">Hi My Town</span></h2>
                         </div>
-
                         <div class="mt-8 mb-4 flex items-center fade-in">
                             <i data-lucide="check-circle-2" class="w-8 h-8 text-green-500 mr-2"></i>
                             <h2 class="text-2xl font-bold text-gray-800">表單已送出</h2>
                         </div>
-
                         <div class="w-full bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center fade-in relative mb-6">
                             <div class="absolute -top-3 bg-orange-100 text-[#f28c00] px-3 py-1 rounded-full text-sm font-bold border border-orange-200">待審核</div>
-                            
                             <h3 class="text-gray-500 text-sm mt-3 mb-1">參加貴賓</h3>
                             <h2 class="text-2xl font-bold text-gray-900 mb-2">張董事長</h2>
                             <p class="text-sm text-gray-600 mb-6 font-medium">您的資料已送出，請靜候活動審核通知</p>
-
                             <div class="w-full border-t border-dashed border-gray-300 relative my-2"></div>
                             <span class="text-xs text-gray-400 bg-white px-2 -mt-4 mb-4">接下來您可以</span>
-
                             <button onclick="openShareModal()" class="w-full bg-[#06C755] text-white py-3.5 rounded-xl font-bold text-lg hover:bg-[#05b34c] transition shadow-md mb-4 flex items-center justify-center">
                                 <i data-lucide="message-circle" class="w-6 h-6 mr-2"></i> 分享至 LINE 好友
                             </button>
-                            
                             <div class="w-full text-left mt-2">
                                 <h4 class="text-red-500 text-sm font-bold mb-1">注意事項：</h4>
                                 <p class="text-red-500 text-xs leading-relaxed font-medium">審核通過後，系統將自動發送「正式報到 QR Code」至您的 Email。活動當日請務必出示 QR Code 報到。</p>
@@ -494,17 +430,20 @@
                         </div>
                     </div>
                 </div>
+                <!-- screen5 結束 -->
 
-               
+            </div>
+        </div>
+        <!-- user-view 結束 -->
+
         <!-- ========================================== -->
-        <!-- 被分享者端 (手機視角) 容器 : 好友對話視窗 -->
+        <!-- 被分享者端 (手機視角) 容器 -->
         <!-- ========================================== -->
         <div id="shared-user-view" class="absolute inset-0 flex items-center justify-center bg-gray-200 py-4 hidden">
-            <!-- 模擬手機外框 -->
             <div class="w-full max-w-[430px] h-full max-h-[932px] bg-white shadow-2xl relative overflow-hidden sm:rounded-[40px] sm:border-[8px] sm:border-gray-800 flex flex-col mx-auto">
-                
-                <!-- 狀態列 (iPhone 樣式) -->
-                <div class="h-12 w-full bg-white flex justify-between items-center px-6 text-xs font-medium z-50 shrink-0 z-[60]">
+
+                <!-- 狀態列 -->
+                <div class="h-12 w-full bg-white flex justify-between items-center px-6 text-xs font-medium z-[60] shrink-0">
                     <span>10:45</span>
                     <div class="flex space-x-2 items-center">
                         <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
@@ -513,9 +452,8 @@
                     </div>
                 </div>
 
-                <!-- Shared Screen 1: 一對一好友聊天室 -->
+                <!-- Shared Screen 1: 聊天室 -->
                 <div id="shared-screen1" class="absolute inset-0 top-12 flex flex-col bg-[#8cb4e2] z-10 transition-transform duration-300">
-                    <!-- LINE 1對1 Header -->
                     <div class="h-14 bg-white flex items-center justify-between px-4 border-b border-gray-200 shrink-0 shadow-sm">
                         <div class="flex items-center">
                             <i data-lucide="chevron-left" class="w-6 h-6 text-gray-600 mr-2"></i>
@@ -528,30 +466,26 @@
                         </div>
                     </div>
 
-                    <!-- 聊天室內容 -->
+                    <!-- 聊天內容 -->
                     <div class="flex-1 overflow-y-auto px-4 pt-4 pb-10 hide-scrollbar flex flex-col">
                         <div class="flex justify-center mb-4"><span class="bg-black/20 text-white text-xs px-3 py-1 rounded-full">今天</span></div>
-                        
-                        <!-- 訊息 1: 朋友的推薦文字 -->
+
+                        <!-- 訊息 1 -->
                         <div class="flex items-start mb-4 relative">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mr-2 text-blue-700 font-bold border border-gray-200 shadow-sm z-10">
-                                張
-                            </div>
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mr-2 text-blue-700 font-bold border border-gray-200 shadow-sm z-10">張</div>
                             <div class="flex flex-col items-start max-w-[270px]">
                                 <div class="text-[11px] text-gray-600 mb-1 ml-1 font-medium">張董事長</div>
-                                <div class="bg-white text-gray-900 text-[15px] p-3 rounded-2xl shadow-sm relative bubble-left leading-relaxed">
+                                <div class="bg-white text-gray-900 text-[15px] p-3 rounded-2xl shadow-sm leading-relaxed">
                                     李總，下個月董事學會的這個活動很不錯，主題剛好適合我們公司接下來的佈局，我們可以一起去聽聽！
                                 </div>
                             </div>
                             <div class="text-[10px] text-gray-500 mt-auto ml-2 mb-1">上午 10:41</div>
                         </div>
 
-                        <!-- 訊息 2: LINE Flex Message 轉傳卡片 -->
+                        <!-- 訊息 2: 卡片 -->
                         <div class="flex items-start mb-6">
-                            <!-- 為了排版對齊，隱藏頭像，保留空間 -->
                             <div class="w-10 h-10 shrink-0 mr-2 opacity-0"></div>
-                            <div class="bg-white rounded-[20px] shadow-md max-w-[270px] overflow-hidden border border-gray-100 bubble-left relative">
-                                <!-- 卡片上半部 Banner -->
+                            <div class="bg-white rounded-[20px] shadow-md max-w-[270px] overflow-hidden border border-gray-100 relative">
                                 <div class="h-32 bg-[#355487] flex flex-col items-center justify-center p-4 text-center relative overflow-hidden">
                                     <div class="absolute -right-4 -top-4 w-16 h-16 bg-white/10 rounded-full"></div>
                                     <div class="absolute -left-2 -bottom-2 w-10 h-10 bg-white/10 rounded-full"></div>
@@ -559,7 +493,6 @@
                                     <h3 class="text-white text-xl font-bold tracking-wide leading-snug">外資精選聯誼會</h3>
                                     <div class="mt-2 bg-[#f28c00] text-white text-[10px] px-2 py-0.5 rounded font-bold">企業全球化佈局</div>
                                 </div>
-                                <!-- 卡片下半部內容 -->
                                 <div class="p-4">
                                     <div class="text-[13px] text-gray-700 space-y-1.5 mb-4 font-medium">
                                         <p><span class="text-gray-400 mr-1">日期</span> 2026/06/05 14:00</p>
@@ -569,21 +502,21 @@
                                         查看活動與報名 <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
                                     </button>
                                 </div>
-                        </div>
                             </div>
-                        </div>
+                            <div class="text-[10px] text-gray-500 mt-auto ml-2 mb-1">上午 10:41</div>
                         </div>
 
-                        <!-- 訊息 3: 本人回覆 ... (收到分享的李總) -->
+                        <!-- 訊息 3 -->
                         <div class="flex items-end justify-end mt-2 fade-in">
                             <div class="text-[10px] text-gray-500 mr-2 mb-1">已讀<br>上午 10:45</div>
-                            <div class="bg-[#85e04b] text-gray-900 text-[15px] p-3 rounded-2xl shadow-sm relative bubble-right leading-relaxed max-w-[250px]">
+                            <div class="bg-[#85e04b] text-gray-900 text-[15px] p-3 rounded-2xl shadow-sm leading-relaxed max-w-[250px]">
                                 沒問題！感謝張董推薦，我現在就來填表報名。
                             </div>
                         </div>
                     </div>
+                    <!-- 聊天內容結束 -->
 
-                    <!-- 聊天輸入框 -->
+                    <!-- 輸入框 -->
                     <div class="h-12 bg-white flex items-center px-3 shrink-0 relative z-20">
                         <i data-lucide="plus" class="w-6 h-6 text-gray-500 mr-2"></i>
                         <div class="flex-1 bg-gray-100 rounded-full h-8 flex items-center px-3">
@@ -593,35 +526,30 @@
                         <i data-lucide="mic" class="w-6 h-6 text-gray-500 ml-2"></i>
                     </div>
                 </div>
+                <!-- shared-screen1 結束 -->
 
-                <!-- Shared Screen 2: 點擊卡片後直接進入報名表 (預設帶入好友推薦資訊) -->
+                <!-- Shared Screen 2: 報名表 -->
                 <div id="shared-screen2" class="absolute inset-0 top-12 flex flex-col bg-gray-50 z-30 translate-y-full transition-transform duration-300">
                     <div class="h-14 bg-white flex items-center justify-between px-4 border-b shrink-0 shadow-sm relative z-10">
                         <button onclick="showScreen('shared-screen1', 'shared')" class="p-2 z-10"><i data-lucide="chevron-left" class="w-6 h-6 text-gray-600"></i></button>
                         <h1 class="text-sm font-bold text-gray-800 truncate absolute w-full text-center left-0 z-0">填寫報名表</h1>
                         <button onclick="showScreen('shared-screen1', 'shared')" class="p-2 z-10"><i data-lucide="x" class="w-6 h-6 text-gray-600"></i></button>
                     </div>
-                    
                     <div class="flex-1 overflow-y-auto p-4 pb-24">
-                
-
                         <h2 class="text-xl font-bold text-[#355487] mb-4 px-1 flex items-center">
                             <div class="w-1.5 h-6 bg-[#f28c00] rounded-full mr-2"></div>外資精選聯誼會
                         </h2>
-                        
                         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
                             <div class="bg-gray-50 px-4 py-3 border-b flex justify-between items-center">
                                 <h3 class="font-bold text-[#355487]">參加貴賓資訊</h3>
                                 <span class="text-xs text-gray-400">已自動帶入您的資料</span>
                             </div>
                             <div class="p-5 space-y-4">
-                                <!-- 推薦人不可編輯欄位 -->
                                 <div>
                                     <label class="block text-sm font-bold text-gray-500 mb-1">邀請人 / 推薦人</label>
                                     <input type="text" value="張董事長 (台灣大企業集團)" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 bg-gray-100 text-gray-500 cursor-not-allowed outline-none font-medium text-[15px]" readonly>
                                 </div>
                                 <div class="border-t border-gray-100 my-4"></div>
-
                                 <div>
                                     <label class="block text-sm font-bold text-gray-700 mb-1">您的姓名 <span class="text-red-500">*</span></label>
                                     <input type="text" value="李大名" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 bg-white text-gray-900 outline-none focus:border-[#f28c00] transition">
@@ -646,6 +574,7 @@
                         <button onclick="showScreen('shared-screen3', 'shared')" class="bg-[#f28c00] text-white px-8 py-2.5 rounded-full font-bold shadow-md hover:bg-orange-600 transition-transform">確認報名</button>
                     </div>
                 </div>
+                <!-- shared-screen2 結束 -->
 
                 <!-- Shared Screen 3: 送出成功 -->
                 <div id="shared-screen3" class="absolute inset-0 top-12 flex flex-col bg-[#f0f2f5] z-40 translate-y-full transition-transform duration-300">
@@ -658,7 +587,6 @@
                         <div class="w-full h-32 bg-[#f28c00] rounded-xl flex items-center justify-center mt-2 shadow-sm relative overflow-hidden">
                             <h2 class="text-white text-3xl font-black italic tracking-widest relative z-10" style="font-family: 'Comic Sans MS', cursive;">揪里嗨 <span class="text-xl ml-2 font-bold">Hi My Town</span></h2>
                         </div>
-                        
                         <div class="mt-8 mb-4 flex items-center fade-in">
                             <i data-lucide="check-circle-2" class="w-8 h-8 text-green-500 mr-2"></i>
                             <h2 class="text-2xl font-bold text-gray-800">表單已送出</h2>
@@ -667,23 +595,24 @@
                             <div class="absolute -top-3 bg-orange-100 text-[#f28c00] px-3 py-1 rounded-full text-sm font-bold border border-orange-200">待審核</div>
                             <h3 class="text-gray-500 text-sm mt-3 mb-1">參加貴賓</h3>
                             <h2 class="text-2xl font-bold text-gray-900 mb-2">李大名 總經理</h2>
-                                 <p class="text-sm text-gray-600 mb-6 font-medium text-center">您的資料已送出，請靜候活動審核通知。</p>                            
+                            <p class="text-sm text-gray-600 mb-6 font-medium text-center">您的資料已送出，請靜候活動審核通知。</p>
                             <button onclick="openShareModal()" class="w-full bg-[#06C755] text-white py-3.5 rounded-xl font-bold text-lg hover:bg-[#05b34c] transition shadow-md mb-4 flex items-center justify-center">
-                              <i data-lucide="message-circle" class="w-6 h-6 mr-2"></i> 分享至 LINE 好友
+                                <i data-lucide="message-circle" class="w-6 h-6 mr-2"></i> 分享至 LINE 好友
                             </button>
                         </div>
                     </div>
                 </div>
+                <!-- shared-screen3 結束 -->
+
             </div>
         </div>
-        
+        <!-- shared-user-view 結束 -->
+
         <!-- ========================================== -->
         <!-- 用戶端信箱 (Gmail 視角) 容器 -->
         <!-- ========================================== -->
         <div id="email-view" class="absolute inset-0 bg-[#f6f8fc] hidden flex-col font-sans p-4 sm:p-8 items-center justify-center">
-            <!-- 模擬瀏覽器外框 -->
             <div class="w-full max-w-6xl h-full max-h-[850px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200">
-                <!-- 瀏覽器標題列 (macOS 樣式) -->
                 <div class="h-10 bg-gray-200 flex items-center px-4 shrink-0">
                     <div class="flex space-x-2">
                         <div class="w-3 h-3 bg-red-400 rounded-full"></div>
@@ -692,8 +621,6 @@
                     </div>
                     <div class="flex-1 text-center text-xs text-gray-500 font-medium">mail.google.com</div>
                 </div>
-                
-                <!-- Gmail 頂部 Header -->
                 <div class="h-16 bg-white flex items-center px-4 border-b border-gray-100 shrink-0">
                     <i data-lucide="menu" class="w-6 h-6 text-gray-600 mx-2 cursor-pointer hover:bg-gray-100 rounded-full p-1 transition" onclick="toggleGmailSidebar()"></i>
                     <div class="flex items-center ml-2 mr-10 cursor-pointer">
@@ -711,10 +638,7 @@
                         <div class="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold border border-blue-200 cursor-pointer text-sm">張</div>
                     </div>
                 </div>
-
-                <!-- Gmail 主要內容區 -->
                 <div class="flex-1 flex overflow-hidden bg-white">
-                    <!-- 左側邊欄 -->
                     <div id="gmail-sidebar" class="w-[250px] bg-white flex flex-col py-3 px-3 shrink-0 transition-all duration-300 overflow-hidden whitespace-nowrap">
                         <button class="bg-[#c2e7ff] text-[#001d35] rounded-2xl py-4 px-6 flex items-center w-[145px] font-medium shadow-sm mb-4 hover:shadow-md transition">
                             <i data-lucide="pencil" class="w-5 h-5 mr-3"></i> 撰寫
@@ -732,23 +656,15 @@
                             <i data-lucide="send" class="w-5 h-5 mr-4 text-gray-500"></i> 寄件備份
                         </div>
                     </div>
-
-                    <!-- Email 閱讀區/列表區 -->
                     <div class="flex-1 bg-white m-2 rounded-2xl flex flex-col overflow-hidden relative border border-gray-100 shadow-sm">
-                        
-                        <!-- ========================= -->
-                        <!-- 1. 信件列表視圖 (收件匣) -->
-                        <!-- ========================= -->
+                        <!-- 信件列表 -->
                         <div id="email-list-view" class="flex-1 flex flex-col">
-                            <!-- 列表工具列 -->
                             <div class="h-14 flex items-center px-4 border-b border-gray-100 shrink-0">
                                 <i data-lucide="square" class="w-4 h-4 cursor-pointer hover:bg-gray-100 p-1.5 rounded box-content text-gray-500"></i>
                                 <i data-lucide="rotate-cw" class="w-4 h-4 cursor-pointer hover:bg-gray-100 p-1.5 rounded-full box-content text-gray-500 ml-4"></i>
                                 <i data-lucide="more-vertical" class="w-4 h-4 cursor-pointer hover:bg-gray-100 p-1.5 rounded-full box-content text-gray-500 ml-4"></i>
                             </div>
-                            
                             <div class="flex-1 overflow-y-auto">
-                                <!-- 行前通知 (預設隱藏，後台發送後顯示) -->
                                 <div id="inbox-row-2" onclick="openEmail(2)" class="hidden flex items-center px-4 py-2 border-b border-gray-100 hover:shadow-sm cursor-pointer bg-white">
                                     <i data-lucide="square" class="w-4 h-4 text-gray-300 mr-4"></i>
                                     <i data-lucide="star" class="w-4 h-4 text-gray-300 mr-4"></i>
@@ -756,7 +672,6 @@
                                     <span class="flex-1 truncate text-gray-900 font-bold">【行前通知】外資精選聯誼會 (中型企業全球化佈局) <span class="font-normal text-gray-500">- 張董事長 您好，我們非常期待明日與您相見...</span></span>
                                     <span class="text-xs text-blue-600 font-bold ml-4">11:28 AM</span>
                                 </div>
-                                <!-- 報名成功通知 -->
                                 <div id="inbox-row-1" onclick="openEmail(1)" class="flex items-center px-4 py-2 border-b border-gray-100 hover:shadow-sm cursor-pointer bg-gray-50">
                                     <i data-lucide="square" class="w-4 h-4 text-gray-300 mr-4"></i>
                                     <i data-lucide="star" class="w-4 h-4 text-gray-300 mr-4"></i>
@@ -764,45 +679,38 @@
                                     <span class="flex-1 truncate text-gray-600 font-normal">【報名成功通知】外資精選聯誼會 (中型企業全球化佈局) <span class="font-normal text-gray-500">- 張董事長 您好，恭喜您！您已成功報名...</span></span>
                                     <span class="text-xs text-gray-500 ml-4">5月18日</span>
                                 </div>
-                                <!-- 模擬過往信件 (展示滑動效果) -->
                                 <div class="flex items-center px-4 py-2 border-b border-gray-100 hover:shadow-sm cursor-pointer bg-white">
-                                    <i data-lucide="square" class="w-4 h-4 text-gray-300 mr-4"></i>
-                                    <i data-lucide="star" class="w-4 h-4 text-gray-300 mr-4"></i>
+                                    <i data-lucide="square" class="w-4 h-4 text-gray-300 mr-4"></i><i data-lucide="star" class="w-4 h-4 text-gray-300 mr-4"></i>
                                     <span class="w-48 font-normal text-gray-600 truncate">董事學會秘書處</span>
                                     <span class="flex-1 truncate text-gray-600 font-normal">2026 會員專屬電子報 第4期 <span class="font-normal text-gray-400">- 各位會員好，本期電子報為您帶來最新產業動態分析...</span></span>
                                     <span class="text-xs text-gray-500 ml-4">5月15日</span>
                                 </div>
                                 <div class="flex items-center px-4 py-2 border-b border-gray-100 hover:shadow-sm cursor-pointer bg-white">
-                                    <i data-lucide="square" class="w-4 h-4 text-gray-300 mr-4"></i>
-                                    <i data-lucide="star" class="w-4 h-4 text-yellow-400 mr-4"></i>
+                                    <i data-lucide="square" class="w-4 h-4 text-gray-300 mr-4"></i><i data-lucide="star" class="w-4 h-4 text-yellow-400 mr-4"></i>
                                     <span class="w-48 font-normal text-gray-600 truncate">天下雜誌</span>
                                     <span class="flex-1 truncate text-gray-600 font-normal">每日財經早報：全球供應鏈重組趨勢 <span class="font-normal text-gray-400">- 今日市場焦點與台股開盤分析...</span></span>
                                     <span class="text-xs text-gray-500 ml-4">5月10日</span>
                                 </div>
                                 <div class="flex items-center px-4 py-2 border-b border-gray-100 hover:shadow-sm cursor-pointer bg-white">
-                                    <i data-lucide="square" class="w-4 h-4 text-gray-300 mr-4"></i>
-                                    <i data-lucide="star" class="w-4 h-4 text-gray-300 mr-4"></i>
+                                    <i data-lucide="square" class="w-4 h-4 text-gray-300 mr-4"></i><i data-lucide="star" class="w-4 h-4 text-gray-300 mr-4"></i>
                                     <span class="w-48 font-normal text-gray-600 truncate">揪里嗨系統通知</span>
                                     <span class="flex-1 truncate text-gray-600 font-normal">帳號登入提醒 <span class="font-normal text-gray-400">- 我們偵測到您的帳號剛從新的裝置登入系統...</span></span>
                                     <span class="text-xs text-gray-500 ml-4">5月02日</span>
                                 </div>
                                 <div class="flex items-center px-4 py-2 border-b border-gray-100 hover:shadow-sm cursor-pointer bg-white">
-                                    <i data-lucide="square" class="w-4 h-4 text-gray-300 mr-4"></i>
-                                    <i data-lucide="star" class="w-4 h-4 text-gray-300 mr-4"></i>
+                                    <i data-lucide="square" class="w-4 h-4 text-gray-300 mr-4"></i><i data-lucide="star" class="w-4 h-4 text-gray-300 mr-4"></i>
                                     <span class="w-48 font-normal text-gray-600 truncate">張特助 (公司)</span>
                                     <span class="flex-1 truncate text-gray-600 font-normal">下週董事會議程草案 <span class="font-normal text-gray-400">- 董事長您好，這是下週二董事會的預定議程，請您過目...</span></span>
                                     <span class="text-xs text-gray-500 ml-4">4月28日</span>
                                 </div>
                                 <div class="flex items-center px-4 py-2 border-b border-gray-100 hover:shadow-sm cursor-pointer bg-white">
-                                    <i data-lucide="square" class="w-4 h-4 text-gray-300 mr-4"></i>
-                                    <i data-lucide="star" class="w-4 h-4 text-gray-300 mr-4"></i>
+                                    <i data-lucide="square" class="w-4 h-4 text-gray-300 mr-4"></i><i data-lucide="star" class="w-4 h-4 text-gray-300 mr-4"></i>
                                     <span class="w-48 font-normal text-gray-600 truncate">董事學會秘書處</span>
                                     <span class="flex-1 truncate text-gray-600 font-normal">【結業證書】傳產轉型策略課 <span class="font-normal text-gray-400">- 恭喜您完成本次課程，附件為您的電子結業證書...</span></span>
                                     <span class="text-xs text-gray-500 ml-4">2025/11/15</span>
                                 </div>
                                 <div class="flex items-center px-4 py-2 hover:shadow-sm cursor-pointer bg-white">
-                                    <i data-lucide="square" class="w-4 h-4 text-gray-300 mr-4"></i>
-                                    <i data-lucide="star" class="w-4 h-4 text-gray-300 mr-4"></i>
+                                    <i data-lucide="square" class="w-4 h-4 text-gray-300 mr-4"></i><i data-lucide="star" class="w-4 h-4 text-gray-300 mr-4"></i>
                                     <span class="w-48 font-normal text-gray-600 truncate">揪里嗨活動小組</span>
                                     <span class="flex-1 truncate text-gray-600 font-normal">歡迎加入揪里嗨報名系統 <span class="font-normal text-gray-400">- 張董事長 您好，您的會員帳號已成功開通...</span></span>
                                     <span class="text-xs text-gray-500 ml-4">2025/10/01</span>
@@ -810,11 +718,8 @@
                             </div>
                         </div>
 
-                        <!-- ========================= -->
-                        <!-- 2. 信件閱讀視圖 -->
-                        <!-- ========================= -->
+                        <!-- 信件閱讀 -->
                         <div id="email-read-view" class="flex-1 flex flex-col hidden min-h-0">
-                            <!-- 閱讀區工具列 -->
                             <div class="h-14 flex items-center px-4 border-b border-gray-100 shrink-0">
                                 <div class="flex items-center space-x-6 text-gray-600">
                                     <i data-lucide="arrow-left" onclick="showEmailList()" class="w-4 h-4 cursor-pointer hover:bg-gray-100 p-1.5 rounded-full box-content text-gray-800" title="返回收件匣"></i>
@@ -826,10 +731,9 @@
                                     <i data-lucide="clock" class="w-4 h-4 cursor-pointer hover:bg-gray-100 p-1.5 rounded-full box-content"></i>
                                 </div>
                             </div>
-                            
-                            <!-- Email Content 1: 報名成功 -->
+
+                            <!-- Email 1: 報名成功 -->
                             <div id="email-content-1" class="flex-1 overflow-y-auto p-6 pb-20 scroll-smooth hidden">
-                                <!-- 郵件標題 -->
                                 <div class="flex items-start justify-between mb-8 pl-14">
                                     <h1 class="text-[22px] font-normal text-gray-900 leading-tight">【報名成功通知】外資精選聯誼會 (中型企業全球化佈局) - 附專屬報到 QR Code</h1>
                                     <div class="flex space-x-2 shrink-0">
@@ -837,12 +741,8 @@
                                         <i data-lucide="external-link" class="w-5 h-5 text-gray-500 cursor-pointer hover:bg-gray-100 p-1 rounded"></i>
                                     </div>
                                 </div>
-
-                                <!-- 寄件人資訊 -->
                                 <div class="flex items-center mb-8">
-                                    <div class="w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4 shadow-sm">
-                                        揪
-                                    </div>
+                                    <div class="w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4 shadow-sm">揪</div>
                                     <div>
                                         <div class="flex items-center">
                                             <span class="font-bold text-gray-900 text-sm">揪里嗨活動小組</span>
@@ -857,119 +757,70 @@
                                         <i data-lucide="more-vertical" class="w-4 h-4 cursor-pointer"></i>
                                     </div>
                                 </div>
-
-                                <!-- 客製化郵件版面 (報名成功版) -->
                                 <div class="bg-[#fcfaf8] rounded-2xl border border-[#eae0d5] p-8 max-w-2xl mx-auto shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-                                    <!-- Banner -->
                                     <div class="text-center mb-8 pb-6 border-b border-gray-200 border-dashed">
-                                        <h2 class="text-3xl font-black italic tracking-widest text-[#f28c00] font-['Comic_Sans_MS']">揪里嗨 <span class="text-base font-bold text-gray-600 ml-1">Hi My Town</span></h2>
+                                        <h2 class="text-3xl font-black italic tracking-widest text-[#f28c00]">揪里嗨 <span class="text-base font-bold text-gray-600 ml-1">Hi My Town</span></h2>
                                     </div>
-
                                     <div class="flex justify-center mb-6">
                                         <div class="bg-green-100 text-green-700 px-4 py-1.5 rounded-full font-bold text-sm flex items-center">
                                             <i data-lucide="check-circle-2" class="w-5 h-5 mr-2"></i> 審核通過，報名成功
                                         </div>
                                     </div>
-
                                     <p class="text-gray-800 text-[15px] leading-relaxed mb-6 font-medium">
                                         <span class="font-bold text-lg text-[#355487]">張董事長 您好，</span><br><br>
-                                        恭喜您！您的報名已通過主辦單位審核。<br>感謝您對本次「外資精選聯誼會」的熱情參與，我們已為您保留專屬席位。<br>
+                                        恭喜您！您的報名已通過主辦單位審核。感謝您對本次「外資精選聯誼會」的熱情參與，我們已為您保留專屬席位。<br>
                                         下方為您的 <span class="font-bold text-[#f28c00]">專屬報到 QR Code</span>，請妥善保存，並於活動當天出示以利快速通關。
                                     </p>
-
-                                    <!-- 活動資訊框 -->
                                     <div class="bg-white border border-[#e2d5c8] rounded-xl p-6 mb-8 shadow-sm">
                                         <h3 class="font-bold text-[#355487] text-[17px] border-b border-gray-100 pb-3 mb-4 flex items-center">
                                             <i data-lucide="calendar-check" class="w-5 h-5 mr-2"></i> 活動資訊
                                         </h3>
                                         <ul class="space-y-4 text-[14px] text-gray-700 font-medium">
-                                            <li class="flex items-start">
-                                                <span class="w-24 shrink-0 text-gray-500 mt-0.5">活動名稱：</span>
-                                                <span class="font-bold text-gray-900 leading-snug">外資精選聯誼會<br><span class="text-gray-600 text-[13px] font-normal">(中型企業全球化佈局)</span></span>
-                                            </li>
-                                            <li class="flex items-start">
-                                                <span class="w-24 shrink-0 text-gray-500">活動時間：</span>
-                                                <span>2026/06/05 (週三) 14:00 - 17:00<br><span class="text-blue-600 text-[13px] font-bold">＊13:30 開始開放報到進場</span></span>
-                                            </li>
-                                            <li class="flex items-start">
-                                                <span class="w-24 shrink-0 text-gray-500">活動地點：</span>
-                                                <span class="leading-snug">台北 101 會議中心<br><span class="text-gray-500 text-[13px] font-normal">台北市信義區信義路五段7號36樓</span></span>
-                                            </li>
+                                            <li class="flex items-start"><span class="w-24 shrink-0 text-gray-500 mt-0.5">活動名稱：</span><span class="font-bold text-gray-900 leading-snug">外資精選聯誼會<br><span class="text-gray-600 text-[13px] font-normal">(中型企業全球化佈局)</span></span></li>
+                                            <li class="flex items-start"><span class="w-24 shrink-0 text-gray-500">活動時間：</span><span>2026/06/05 (週三) 14:00 - 17:00<br><span class="text-blue-600 text-[13px] font-bold">＊13:30 開始開放報到進場</span></span></li>
+                                            <li class="flex items-start"><span class="w-24 shrink-0 text-gray-500">活動地點：</span><span class="leading-snug">台北 101 會議中心<br><span class="text-gray-500 text-[13px] font-normal">台北市信義區信義路五段7號36樓</span></span></li>
                                         </ul>
                                     </div>
-
-                                    <!-- QR Code 區塊 -->
                                     <div class="bg-white border-2 border-dashed border-[#f28c00] rounded-xl p-8 mb-8 text-center relative overflow-hidden shadow-sm">
                                         <div class="absolute top-0 left-0 w-full h-2 bg-[#f28c00]"></div>
                                         <h3 class="font-bold text-gray-900 text-lg mb-1 mt-2">您的專屬報到 QR Code</h3>
                                         <p class="text-sm text-gray-500 mb-6 font-medium">您可以將此信件加入星號，以便活動當天快速查找</p>
-                                        
                                         <div class="inline-block p-4 bg-gray-50 rounded-2xl border border-gray-200 mb-3 shadow-inner">
                                             <svg class="w-48 h-48" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-  <!-- 左上角 -->
-  <rect x="10" y="10" width="70" height="70" rx="4" fill="none" stroke="#111" stroke-width="8"/>
-  <rect x="28" y="28" width="34" height="34" rx="2" fill="#111"/>
-  <!-- 右上角 -->
-  <rect x="120" y="10" width="70" height="70" rx="4" fill="none" stroke="#111" stroke-width="8"/>
-  <rect x="138" y="28" width="34" height="34" rx="2" fill="#111"/>
-  <!-- 左下角 -->
-  <rect x="10" y="120" width="70" height="70" rx="4" fill="none" stroke="#111" stroke-width="8"/>
-  <rect x="28" y="138" width="34" height="34" rx="2" fill="#111"/>
-  <!-- 中間資料點 -->
-  <rect x="100" y="100" width="12" height="12" fill="#111"/>
-  <rect x="120" y="100" width="12" height="12" fill="#111"/>
-  <rect x="140" y="100" width="12" height="12" fill="#111"/>
-  <rect x="160" y="100" width="12" height="12" fill="#111"/>
-  <rect x="100" y="120" width="12" height="12" fill="#111"/>
-  <rect x="140" y="120" width="12" height="12" fill="#111"/>
-  <rect x="100" y="140" width="12" height="12" fill="#111"/>
-  <rect x="120" y="140" width="12" height="12" fill="#111"/>
-  <rect x="160" y="140" width="12" height="12" fill="#111"/>
-  <rect x="100" y="160" width="12" height="12" fill="#111"/>
-  <rect x="140" y="160" width="12" height="12" fill="#111"/>
-  <rect x="160" y="160" width="12" height="12" fill="#111"/>
-</svg>
+                                                <rect x="10" y="10" width="70" height="70" rx="4" fill="none" stroke="#111" stroke-width="8"/>
+                                                <rect x="28" y="28" width="34" height="34" rx="2" fill="#111"/>
+                                                <rect x="120" y="10" width="70" height="70" rx="4" fill="none" stroke="#111" stroke-width="8"/>
+                                                <rect x="138" y="28" width="34" height="34" rx="2" fill="#111"/>
+                                                <rect x="10" y="120" width="70" height="70" rx="4" fill="none" stroke="#111" stroke-width="8"/>
+                                                <rect x="28" y="138" width="34" height="34" rx="2" fill="#111"/>
+                                                <rect x="100" y="100" width="12" height="12" fill="#111"/><rect x="120" y="100" width="12" height="12" fill="#111"/>
+                                                <rect x="140" y="100" width="12" height="12" fill="#111"/><rect x="160" y="100" width="12" height="12" fill="#111"/>
+                                                <rect x="100" y="120" width="12" height="12" fill="#111"/><rect x="140" y="120" width="12" height="12" fill="#111"/>
+                                                <rect x="100" y="140" width="12" height="12" fill="#111"/><rect x="120" y="140" width="12" height="12" fill="#111"/>
+                                                <rect x="160" y="140" width="12" height="12" fill="#111"/><rect x="100" y="160" width="12" height="12" fill="#111"/>
+                                                <rect x="140" y="160" width="12" height="12" fill="#111"/><rect x="160" y="160" width="12" height="12" fill="#111"/>
+                                            </svg>
                                         </div>
-                                        
-                                        <div class="mt-2 text-gray-400 font-mono tracking-widest text-xs font-bold">
-                                            TICKET - 20260605 - A001
-                                        </div>
+                                        <div class="mt-2 text-gray-400 font-mono tracking-widest text-xs font-bold">TICKET - 20260605 - A001</div>
                                     </div>
-
-                                    <!-- 行前提醒事項 -->
                                     <div class="bg-[#eaf4f6] border border-[#b2dae2] rounded-xl p-5 mb-6">
                                         <h4 class="font-bold text-[#193a62] text-[15px] mb-3 flex items-center">
                                             <i data-lucide="bell-ring" class="w-4 h-4 mr-1.5 text-[#193a62]"></i> 後續通知
                                         </h4>
-                                        <p class="text-[13px] text-[#193a62]/90 leading-relaxed font-medium">
-                                            系統將於活動前兩天再次發送「行前通知信」，屆時將提供更詳細的交通指引與當日注意事項，敬請留意您的信箱。
-                                        </p>
+                                        <p class="text-[13px] text-[#193a62]/90 leading-relaxed font-medium">系統將於活動前兩天再次發送「行前通知信」，屆時將提供更詳細的交通指引與當日注意事項，敬請留意您的信箱。</p>
                                     </div>
-
-                                    <!-- 頁腳 -->
                                     <div class="border-t border-gray-200 pt-6 text-center">
-                                        <p class="text-[13px] text-gray-500 font-medium leading-relaxed">
-                                            揪里嗨活動小組 敬上<br>
-                                            客服專線：(02) 2345-6789<br>
-                                            <a href="#" class="text-[#f28c00] hover:underline">www.himytown.com</a>
-                                        </p>
+                                        <p class="text-[13px] text-gray-500 font-medium leading-relaxed">揪里嗨活動小組 敬上<br>客服專線：(02) 2345-6789<br><a href="#" class="text-[#f28c00] hover:underline">www.himytown.com</a></p>
                                     </div>
                                 </div>
-
-                                <!-- Gmail 底部回覆按鈕 -->
                                 <div class="mt-8 flex space-x-4 pl-14">
-                                    <button class="px-6 py-2 border border-gray-300 rounded-full font-medium text-gray-600 hover:bg-gray-50 flex items-center text-sm transition">
-                                        <i data-lucide="corner-up-left" class="w-4 h-4 mr-2"></i> 回覆
-                                    </button>
-                                    <button class="px-6 py-2 border border-gray-300 rounded-full font-medium text-gray-600 hover:bg-gray-50 flex items-center text-sm transition">
-                                        <i data-lucide="corner-up-right" class="w-4 h-4 mr-2"></i> 轉寄
-                                    </button>
+                                    <button class="px-6 py-2 border border-gray-300 rounded-full font-medium text-gray-600 hover:bg-gray-50 flex items-center text-sm transition"><i data-lucide="corner-up-left" class="w-4 h-4 mr-2"></i> 回覆</button>
+                                    <button class="px-6 py-2 border border-gray-300 rounded-full font-medium text-gray-600 hover:bg-gray-50 flex items-center text-sm transition"><i data-lucide="corner-up-right" class="w-4 h-4 mr-2"></i> 轉寄</button>
                                 </div>
                             </div>
 
-                            <!-- Email Content 2: 行前通知 (新加入) -->
+                            <!-- Email 2: 行前通知 -->
                             <div id="email-content-2" class="flex-1 overflow-y-auto p-6 pb-20 scroll-smooth hidden">
-                                <!-- 郵件標題 -->
                                 <div class="flex items-start justify-between mb-8 pl-14">
                                     <h1 class="text-[22px] font-normal text-gray-900 leading-tight">【行前通知】外資精選聯誼會 (中型企業全球化佈局) - 期待您的蒞臨</h1>
                                     <div class="flex space-x-2 shrink-0">
@@ -977,12 +828,8 @@
                                         <i data-lucide="external-link" class="w-5 h-5 text-gray-500 cursor-pointer hover:bg-gray-100 p-1 rounded"></i>
                                     </div>
                                 </div>
-
-                                <!-- 寄件人資訊 -->
                                 <div class="flex items-center mb-8">
-                                    <div class="w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4 shadow-sm">
-                                        揪
-                                    </div>
+                                    <div class="w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4 shadow-sm">揪</div>
                                     <div>
                                         <div class="flex items-center">
                                             <span class="font-bold text-gray-900 text-sm">揪里嗨活動小組</span>
@@ -997,80 +844,47 @@
                                         <i data-lucide="more-vertical" class="w-4 h-4 cursor-pointer"></i>
                                     </div>
                                 </div>
-
-                                <!-- 客製化郵件版面 -->
                                 <div class="bg-[#fcfaf8] rounded-2xl border border-[#eae0d5] p-8 max-w-2xl mx-auto shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-                                    <!-- Banner -->
                                     <div class="text-center mb-8 pb-6 border-b border-gray-200 border-dashed">
-                                        <h2 class="text-3xl font-black italic tracking-widest text-[#f28c00] font-['Comic_Sans_MS']">揪里嗨 <span class="text-base font-bold text-gray-600 ml-1">Hi My Town</span></h2>
+                                        <h2 class="text-3xl font-black italic tracking-widest text-[#f28c00]">揪里嗨 <span class="text-base font-bold text-gray-600 ml-1">Hi My Town</span></h2>
                                     </div>
-
                                     <p class="text-gray-800 text-[15px] leading-relaxed mb-6 font-medium">
                                         <span class="font-bold text-lg text-[#355487]">張董事長 您好，</span><br><br>
-                                        我們非常期待明日與您在「外資精選聯誼會」相見！<br>為確保您有順暢的參與體驗，特此發送行前提醒與專屬報到憑證。<br>
+                                        我們非常期待明日與您在「外資精選聯誼會」相見！為確保您有順暢的參與體驗，特此發送行前提醒與專屬報到憑證。<br>
                                         請於抵達會場時，準備好下方的 <span class="font-bold text-[#f28c00]">活動 QR Code</span> 以便現場快速完成報到。
                                     </p>
-
-                                    <!-- 活動資訊框 -->
                                     <div class="bg-white border border-[#e2d5c8] rounded-xl p-6 mb-8 shadow-sm">
                                         <h3 class="font-bold text-[#355487] text-[17px] border-b border-gray-100 pb-3 mb-4 flex items-center">
                                             <i data-lucide="calendar-check" class="w-5 h-5 mr-2"></i> 活動資訊
                                         </h3>
                                         <ul class="space-y-4 text-[14px] text-gray-700 font-medium">
-                                            <li class="flex items-start">
-                                                <span class="w-24 shrink-0 text-gray-500 mt-0.5">活動名稱：</span>
-                                                <span class="font-bold text-gray-900 leading-snug">外資精選聯誼會<br><span class="text-gray-600 text-[13px] font-normal">(中型企業全球化佈局)</span></span>
-                                            </li>
-                                            <li class="flex items-start">
-                                                <span class="w-24 shrink-0 text-gray-500">活動時間：</span>
-                                                <span>2026/06/05 (週三) 14:00 - 17:00<br><span class="text-blue-600 text-[13px] font-bold">＊13:30 開始開放報到進場</span></span>
-                                            </li>
-                                            <li class="flex items-start">
-                                                <span class="w-24 shrink-0 text-gray-500">活動地點：</span>
-                                                <span class="leading-snug">台北 101 會議中心<br><span class="text-gray-500 text-[13px] font-normal">台北市信義區信義路五段7號36樓</span></span>
-                                            </li>
+                                            <li class="flex items-start"><span class="w-24 shrink-0 text-gray-500 mt-0.5">活動名稱：</span><span class="font-bold text-gray-900 leading-snug">外資精選聯誼會<br><span class="text-gray-600 text-[13px] font-normal">(中型企業全球化佈局)</span></span></li>
+                                            <li class="flex items-start"><span class="w-24 shrink-0 text-gray-500">活動時間：</span><span>2026/06/05 (週三) 14:00 - 17:00<br><span class="text-blue-600 text-[13px] font-bold">＊13:30 開始開放報到進場</span></span></li>
+                                            <li class="flex items-start"><span class="w-24 shrink-0 text-gray-500">活動地點：</span><span class="leading-snug">台北 101 會議中心<br><span class="text-gray-500 text-[13px] font-normal">台北市信義區信義路五段7號36樓</span></span></li>
                                         </ul>
                                     </div>
-
-                                    <!-- QR Code 區塊 -->
                                     <div class="bg-white border-2 border-dashed border-[#f28c00] rounded-xl p-8 mb-8 text-center relative overflow-hidden shadow-sm">
                                         <div class="absolute top-0 left-0 w-full h-2 bg-[#f28c00]"></div>
                                         <h3 class="font-bold text-gray-900 text-lg mb-1 mt-2">您的專屬報到 QR Code</h3>
                                         <p class="text-sm text-gray-500 mb-6 font-medium">請將手機螢幕調亮，並於報到處出示此條碼</p>
-                                        
                                         <div class="inline-block p-4 bg-gray-50 rounded-2xl border border-gray-200 mb-3 shadow-inner">
-                                           <svg class="w-48 h-48" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-  <!-- 左上角 -->
-  <rect x="10" y="10" width="70" height="70" rx="4" fill="none" stroke="#111" stroke-width="8"/>
-  <rect x="28" y="28" width="34" height="34" rx="2" fill="#111"/>
-  <!-- 右上角 -->
-  <rect x="120" y="10" width="70" height="70" rx="4" fill="none" stroke="#111" stroke-width="8"/>
-  <rect x="138" y="28" width="34" height="34" rx="2" fill="#111"/>
-  <!-- 左下角 -->
-  <rect x="10" y="120" width="70" height="70" rx="4" fill="none" stroke="#111" stroke-width="8"/>
-  <rect x="28" y="138" width="34" height="34" rx="2" fill="#111"/>
-  <!-- 中間資料點 -->
-  <rect x="100" y="100" width="12" height="12" fill="#111"/>
-  <rect x="120" y="100" width="12" height="12" fill="#111"/>
-  <rect x="140" y="100" width="12" height="12" fill="#111"/>
-  <rect x="160" y="100" width="12" height="12" fill="#111"/>
-  <rect x="100" y="120" width="12" height="12" fill="#111"/>
-  <rect x="140" y="120" width="12" height="12" fill="#111"/>
-  <rect x="100" y="140" width="12" height="12" fill="#111"/>
-  <rect x="120" y="140" width="12" height="12" fill="#111"/>
-  <rect x="160" y="140" width="12" height="12" fill="#111"/>
-  <rect x="100" y="160" width="12" height="12" fill="#111"/>
-  <rect x="140" y="160" width="12" height="12" fill="#111"/>
-  <rect x="160" y="160" width="12" height="12" fill="#111"/>
-</svg>
+                                            <svg class="w-48 h-48" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                                                <rect x="10" y="10" width="70" height="70" rx="4" fill="none" stroke="#111" stroke-width="8"/>
+                                                <rect x="28" y="28" width="34" height="34" rx="2" fill="#111"/>
+                                                <rect x="120" y="10" width="70" height="70" rx="4" fill="none" stroke="#111" stroke-width="8"/>
+                                                <rect x="138" y="28" width="34" height="34" rx="2" fill="#111"/>
+                                                <rect x="10" y="120" width="70" height="70" rx="4" fill="none" stroke="#111" stroke-width="8"/>
+                                                <rect x="28" y="138" width="34" height="34" rx="2" fill="#111"/>
+                                                <rect x="100" y="100" width="12" height="12" fill="#111"/><rect x="120" y="100" width="12" height="12" fill="#111"/>
+                                                <rect x="140" y="100" width="12" height="12" fill="#111"/><rect x="160" y="100" width="12" height="12" fill="#111"/>
+                                                <rect x="100" y="120" width="12" height="12" fill="#111"/><rect x="140" y="120" width="12" height="12" fill="#111"/>
+                                                <rect x="100" y="140" width="12" height="12" fill="#111"/><rect x="120" y="140" width="12" height="12" fill="#111"/>
+                                                <rect x="160" y="140" width="12" height="12" fill="#111"/><rect x="100" y="160" width="12" height="12" fill="#111"/>
+                                                <rect x="140" y="160" width="12" height="12" fill="#111"/><rect x="160" y="160" width="12" height="12" fill="#111"/>
+                                            </svg>
                                         </div>
-                                        
-                                        <div class="mt-2 text-gray-400 font-mono tracking-widest text-xs font-bold">
-                                            TICKET - 20260605 - A001
-                                        </div>
+                                        <div class="mt-2 text-gray-400 font-mono tracking-widest text-xs font-bold">TICKET - 20260605 - A001</div>
                                     </div>
-
-                                    <!-- 行前提醒事項 -->
                                     <div class="bg-[#eaf4f6] border border-[#b2dae2] rounded-xl p-5 mb-6">
                                         <h4 class="font-bold text-[#193a62] text-[15px] mb-3 flex items-center">
                                             <i data-lucide="bell-ring" class="w-4 h-4 mr-1.5 text-[#193a62]"></i> 行前貼心提醒
@@ -1081,45 +895,30 @@
                                             <li>因大樓安管規定，請於 1 樓大廳訪客發卡機掃描 QR Code 取得訪客證後，再搭乘電梯至 36 樓會場。</li>
                                         </ul>
                                     </div>
-
-                                    <!-- 頁腳 -->
                                     <div class="border-t border-gray-200 pt-6 text-center">
-                                        <p class="text-[13px] text-gray-500 font-medium leading-relaxed">
-                                            揪里嗨活動小組 敬上<br>
-                                            客服專線：(02) 2345-6789<br>
-                                            <a href="#" class="text-[#f28c00] hover:underline">www.himytown.com</a>
-                                        </p>
+                                        <p class="text-[13px] text-gray-500 font-medium leading-relaxed">揪里嗨活動小組 敬上<br>客服專線：(02) 2345-6789<br><a href="#" class="text-[#f28c00] hover:underline">www.himytown.com</a></p>
                                     </div>
                                 </div>
-                                
-                                <!-- Gmail 底部回覆按鈕 -->
                                 <div class="mt-8 flex space-x-4 pl-14">
-                                    <button class="px-6 py-2 border border-gray-300 rounded-full font-medium text-gray-600 hover:bg-gray-50 flex items-center text-sm transition">
-                                        <i data-lucide="corner-up-left" class="w-4 h-4 mr-2"></i> 回覆
-                                    </button>
-                                    <button class="px-6 py-2 border border-gray-300 rounded-full font-medium text-gray-600 hover:bg-gray-50 flex items-center text-sm transition">
-                                        <i data-lucide="corner-up-right" class="w-4 h-4 mr-2"></i> 轉寄
-                                    </button>
+                                    <button class="px-6 py-2 border border-gray-300 rounded-full font-medium text-gray-600 hover:bg-gray-50 flex items-center text-sm transition"><i data-lucide="corner-up-left" class="w-4 h-4 mr-2"></i> 回覆</button>
+                                    <button class="px-6 py-2 border border-gray-300 rounded-full font-medium text-gray-600 hover:bg-gray-50 flex items-center text-sm transition"><i data-lucide="corner-up-right" class="w-4 h-4 mr-2"></i> 轉寄</button>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- email-view 結束 -->
 
         <!-- ========================================== -->
-        <!-- 秘書處後台 (還原揪里嗨真實截圖樣式) -->
+        <!-- 秘書處後台 -->
         <!-- ========================================== -->
         <div id="admin-view" class="absolute inset-0 bg-[#fffdf9] hidden flex-col font-sans">
-            
-            <!-- 頂部橘色 Header -->
             <header class="h-[52px] bg-[#f38d00] flex items-center justify-between px-6 shrink-0 z-30 shadow-sm text-white">
                 <div class="flex items-center space-x-2">
                     <i data-lucide="menu" class="w-6 h-6 mr-2 cursor-pointer hover:text-orange-200 transition" onclick="toggleSidebar()"></i>
-                    <!-- 模擬 Logo 字體 -->
-                    <h1 class="text-xl font-black italic tracking-wider font-['Comic_Sans_MS'] flex items-center">
+                    <h1 class="text-xl font-black italic tracking-wider flex items-center" style="font-family: 'Comic Sans MS', cursive;">
                         揪里嗨 <span class="text-sm font-bold ml-2">Hi My Town</span>
                     </h1>
                 </div>
@@ -1131,21 +930,17 @@
             </header>
 
             <div class="flex flex-1 overflow-hidden">
-                <!-- 左側白色側邊欄 Sidebar (加入過場動畫與收放機制) -->
                 <aside id="admin-sidebar" class="w-[220px] bg-white border-r border-gray-200 flex flex-col shrink-0 transition-all duration-300 overflow-hidden whitespace-nowrap">
                     <div class="p-4 text-xs text-gray-400 font-medium mb-2 border-b border-gray-100">首頁 / 活動管理 / 活動管理列表</div>
                     <nav class="flex-1 overflow-y-auto space-y-1">
                         <a href="#" class="flex items-center px-6 py-3.5 text-gray-700 hover:bg-orange-50 hover:text-[#f38d00] transition text-sm font-bold">
                             <i data-lucide="home" class="w-5 h-5 mr-3"></i> 首頁
                         </a>
-                        
-                        <!-- 活動管理 (選中狀態) -->
                         <div class="bg-orange-50/50">
                             <a href="#" onclick="showAdminTab('activity')" id="nav-activity" class="flex items-center px-6 py-3.5 text-[#f38d00] bg-orange-50 border-l-4 border-[#f38d00] transition text-sm font-bold">
                                 <i data-lucide="calendar-check" class="w-5 h-5 mr-3"></i> 活動管理
                             </a>
                         </div>
-                        
                         <a href="#" onclick="showAdminTab('member')" id="nav-member" class="flex items-center justify-between px-6 py-3.5 text-gray-700 hover:bg-orange-50 hover:text-[#f38d00] transition text-sm font-bold">
                             <div class="flex items-center"><i data-lucide="users" class="w-5 h-5 mr-3 text-blue-600"></i> 會員管理</div>
                             <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
@@ -1170,25 +965,15 @@
                     </nav>
                 </aside>
 
-                <!-- 右側主要內容區 -->
                 <main class="flex-1 bg-[#fff8ea]/40 overflow-y-auto p-8 relative">
-                    
-                    <!-- ============================================== -->
-                    <!-- Tab 1: 活動管理列表 (卡片頁) -->
-                    <!-- ============================================== -->
+
+                    <!-- Tab 活動管理 -->
                     <div id="admin-tab-activity" class="max-w-7xl mx-auto block fade-in">
-                        <!-- 搜尋列與分類 Tabs -->
                         <div class="flex justify-between items-center mb-6">
                             <div class="flex space-x-3 text-sm">
-                                <button class="px-5 py-2 bg-white text-[#f38d00] rounded-full font-bold shadow-sm border border-orange-100 flex items-center">
-                                    全部 <span class="bg-[#f38d00] text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] ml-2">26</span>
-                                </button>
-                                <button class="px-5 py-2 bg-[#f38d00] text-white rounded-full font-bold shadow-sm flex items-center">
-                                    未結束 <span class="bg-white text-[#f38d00] rounded-full w-5 h-5 flex items-center justify-center text-[10px] ml-2">2</span>
-                                </button>
-                                <button class="px-5 py-2 bg-white text-[#f38d00] rounded-full font-bold shadow-sm border border-orange-100 flex items-center">
-                                    已結束 <span class="bg-[#f38d00] text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] ml-2">24</span>
-                                </button>
+                                <button class="px-5 py-2 bg-white text-[#f38d00] rounded-full font-bold shadow-sm border border-orange-100 flex items-center">全部 <span class="bg-[#f38d00] text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] ml-2">26</span></button>
+                                <button class="px-5 py-2 bg-[#f38d00] text-white rounded-full font-bold shadow-sm flex items-center">未結束 <span class="bg-white text-[#f38d00] rounded-full w-5 h-5 flex items-center justify-center text-[10px] ml-2">2</span></button>
+                                <button class="px-5 py-2 bg-white text-[#f38d00] rounded-full font-bold shadow-sm border border-orange-100 flex items-center">已結束 <span class="bg-[#f38d00] text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] ml-2">24</span></button>
                             </div>
                             <div class="flex items-center space-x-4">
                                 <div class="relative">
@@ -1198,123 +983,75 @@
                                 <button class="px-6 py-2 bg-[#f38d00] text-white text-sm font-bold rounded-full shadow-sm hover:bg-orange-600 transition">建立活動</button>
                             </div>
                         </div>
-
-                        <!-- 活動卡片列表 -->
                         <div class="grid grid-cols-2 gap-6">
-                            
-                            <!-- 卡片 1: 外資精選聯誼會 (加入報名進度 hover 與點擊) -->
                             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
                                 <h3 class="text-xl font-bold text-gray-900 mb-2">外資精選聯誼會 | 中型企業全球化佈局</h3>
                                 <p class="text-gray-500 text-sm mb-6 font-medium">進行中 2026/06/05 14:00</p>
-                                
-                                <!-- 報名進度 (Hover 觸發橘色邊框，點擊進入名單) -->
                                 <div onclick="showAdminTab('registration')" class="group border border-gray-200 rounded-xl p-4 mb-6 cursor-pointer hover:border-[#f38d00] transition-colors relative">
                                     <div class="flex justify-between items-center text-sm font-bold text-gray-500 mb-4">
                                         <span>報名進度</span>
                                         <span class="text-blue-600 group-hover:text-[#f38d00] transition-colors flex items-center">名單 <i data-lucide="chevron-right" class="w-4 h-4"></i></span>
                                     </div>
                                     <div class="flex items-end justify-between">
-                                        <div class="flex items-baseline">
-                                            <span class="text-3xl font-bold text-gray-900">1</span>
-                                            <span class="text-gray-400 text-sm font-medium ml-1">/ 無上限</span>
-                                        </div>
-                                        <div class="w-10 h-10 border border-green-200 rounded-xl flex items-center justify-center text-green-500">
-                                            <i data-lucide="infinity" class="w-6 h-6"></i>
-                                        </div>
+                                        <div class="flex items-baseline"><span class="text-3xl font-bold text-gray-900">1</span><span class="text-gray-400 text-sm font-medium ml-1">/ 無上限</span></div>
+                                        <div class="w-10 h-10 border border-green-200 rounded-xl flex items-center justify-center text-green-500"><i data-lucide="infinity" class="w-6 h-6"></i></div>
                                     </div>
                                 </div>
-
                                 <div class="flex justify-between items-center pt-2 mt-auto">
                                     <div class="flex items-center space-x-4">
                                         <div class="flex items-center text-sm font-bold text-gray-700">
-                                            <div class="w-10 h-5 bg-[#3b5998] rounded-full relative mr-2 cursor-pointer shadow-inner">
-                                                <div class="absolute right-1 top-1 w-3 h-3 bg-white rounded-full"></div>
-                                            </div>
+                                            <div class="w-10 h-5 bg-[#3b5998] rounded-full relative mr-2 cursor-pointer shadow-inner"><div class="absolute right-1 top-1 w-3 h-3 bg-white rounded-full"></div></div>
                                             開放報名
                                         </div>
                                         <div class="flex items-center text-sm font-bold text-gray-400">
-                                            <div class="w-10 h-5 bg-gray-300 rounded-full relative mr-2 cursor-pointer shadow-inner">
-                                                <div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full"></div>
-                                            </div>
+                                            <div class="w-10 h-5 bg-gray-300 rounded-full relative mr-2 cursor-pointer shadow-inner"><div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full"></div></div>
                                             LINE未曝光 <i data-lucide="info" class="w-4 h-4 ml-1"></i>
                                         </div>
                                     </div>
                                     <div class="flex space-x-2">
-                                        <button class="px-4 py-1.5 border border-blue-200 text-blue-600 rounded-full flex items-center text-sm font-bold hover:bg-blue-50 transition">
-                                            <i data-lucide="pencil" class="w-4 h-4 mr-1.5"></i> 編輯
-                                        </button>
-                                        <button class="w-8 h-8 border border-blue-200 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-50 transition">
-                                            <i data-lucide="share-2" class="w-4 h-4"></i>
-                                        </button>
-                                        <button class="w-8 h-8 border border-blue-200 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-50 transition">
-                                            <i data-lucide="more-horizontal" class="w-4 h-4"></i>
-                                        </button>
+                                        <button class="px-4 py-1.5 border border-blue-200 text-blue-600 rounded-full flex items-center text-sm font-bold hover:bg-blue-50 transition"><i data-lucide="pencil" class="w-4 h-4 mr-1.5"></i> 編輯</button>
+                                        <button class="w-8 h-8 border border-blue-200 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-50 transition"><i data-lucide="share-2" class="w-4 h-4"></i></button>
+                                        <button class="w-8 h-8 border border-blue-200 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-50 transition"><i data-lucide="more-horizontal" class="w-4 h-4"></i></button>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- 卡片 2: 一起嗨活動方案誌 (靜態展示) -->
                             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
                                 <h3 class="text-xl font-bold text-gray-900 mb-2">傳奇企業慈善晚會</h3>
                                 <p class="text-gray-500 text-sm mb-6 font-medium">進行中 2025/09/19 00:00</p>
-                                
                                 <div class="border border-gray-200 rounded-xl p-4 mb-6">
-                                    <div class="flex justify-between items-center text-sm font-bold text-gray-500 mb-4">
-                                        <span>報名進度</span>
-                                        <span class="text-blue-600">名單 ></span>
-                                    </div>
+                                    <div class="flex justify-between items-center text-sm font-bold text-gray-500 mb-4"><span>報名進度</span><span class="text-blue-600">名單 ></span></div>
                                     <div class="flex items-end justify-between">
-                                        <div class="flex items-baseline">
-                                            <span class="text-3xl font-bold text-gray-900">7</span>
-                                            <span class="text-gray-400 text-sm font-medium ml-1">/ 無上限</span>
-                                        </div>
-                                        <div class="w-10 h-10 border border-green-200 rounded-xl flex items-center justify-center text-green-500">
-                                            <i data-lucide="infinity" class="w-6 h-6"></i>
-                                        </div>
+                                        <div class="flex items-baseline"><span class="text-3xl font-bold text-gray-900">7</span><span class="text-gray-400 text-sm font-medium ml-1">/ 無上限</span></div>
+                                        <div class="w-10 h-10 border border-green-200 rounded-xl flex items-center justify-center text-green-500"><i data-lucide="infinity" class="w-6 h-6"></i></div>
                                     </div>
                                 </div>
-
                                 <div class="flex justify-between items-center pt-2 mt-auto">
                                     <div class="flex items-center space-x-4">
                                         <div class="flex items-center text-sm font-bold text-gray-700">
-                                            <div class="w-10 h-5 bg-[#3b5998] rounded-full relative mr-2 cursor-pointer shadow-inner">
-                                                <div class="absolute right-1 top-1 w-3 h-3 bg-white rounded-full"></div>
-                                            </div>
+                                            <div class="w-10 h-5 bg-[#3b5998] rounded-full relative mr-2 cursor-pointer shadow-inner"><div class="absolute right-1 top-1 w-3 h-3 bg-white rounded-full"></div></div>
                                             開放報名
                                         </div>
                                         <div class="flex items-center text-sm font-bold text-gray-400">
-                                            <div class="w-10 h-5 bg-gray-300 rounded-full relative mr-2 cursor-pointer shadow-inner">
-                                                <div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full"></div>
-                                            </div>
+                                            <div class="w-10 h-5 bg-gray-300 rounded-full relative mr-2 cursor-pointer shadow-inner"><div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full"></div></div>
                                             LINE未曝光 <i data-lucide="info" class="w-4 h-4 ml-1"></i>
                                         </div>
                                     </div>
                                     <div class="flex space-x-2">
-                                        <button class="px-4 py-1.5 border border-blue-200 text-blue-600 rounded-full flex items-center text-sm font-bold hover:bg-blue-50 transition">
-                                            <i data-lucide="pencil" class="w-4 h-4 mr-1.5"></i> 編輯
-                                        </button>
-                                        <button class="w-8 h-8 border border-blue-200 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-50 transition">
-                                            <i data-lucide="share-2" class="w-4 h-4"></i>
-                                        </button>
-                                        <button class="w-8 h-8 border border-blue-200 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-50 transition">
-                                            <i data-lucide="more-horizontal" class="w-4 h-4"></i>
-                                        </button>
+                                        <button class="px-4 py-1.5 border border-blue-200 text-blue-600 rounded-full flex items-center text-sm font-bold hover:bg-blue-50 transition"><i data-lucide="pencil" class="w-4 h-4 mr-1.5"></i> 編輯</button>
+                                        <button class="w-8 h-8 border border-blue-200 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-50 transition"><i data-lucide="share-2" class="w-4 h-4"></i></button>
+                                        <button class="w-8 h-8 border border-blue-200 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-50 transition"><i data-lucide="more-horizontal" class="w-4 h-4"></i></button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- ============================================== -->
-                    <!-- Tab 2: 報名名單列表 (含審核狀態) -->
-                    <!-- ============================================== -->
+                    <!-- Tab 報名名單 -->
                     <div id="admin-tab-registration" class="w-full hidden fade-in">
                         <div class="text-xs text-gray-500 font-medium mb-4 cursor-pointer" onclick="showAdminTab('activity')">
                             <span class="hover:text-blue-500">首頁</span> / <span class="hover:text-blue-500">活動管理</span> / <span class="hover:text-blue-500">活動管理列表</span> / <span class="text-gray-800">外資精選聯誼會表單</span>
                         </div>
-                        
                         <div class="bg-white shadow-sm border border-gray-200">
-                            <!-- 工具列 -->
                             <div class="p-4 border-b border-gray-100 flex justify-between items-center">
                                 <div class="flex space-x-3 text-blue-600">
                                     <button class="w-8 h-8 border border-blue-200 rounded-full flex items-center justify-center hover:bg-blue-50 transition"><i data-lucide="maximize" class="w-4 h-4"></i></button>
@@ -1328,8 +1065,6 @@
                                     <button class="border border-gray-200 px-3 py-1 rounded-full hover:bg-gray-50">匯出</button>
                                 </div>
                             </div>
-                            
-                            <!-- 表格 -->
                             <div class="overflow-x-auto w-full">
                                 <table class="w-full text-left text-[13px]">
                                     <thead class="bg-gray-50 text-gray-600 border-b border-gray-200 font-bold">
@@ -1341,7 +1076,6 @@
                                             <th class="px-4 py-3 whitespace-nowrap">公司電話</th>
                                             <th class="px-4 py-3 whitespace-nowrap">姓名</th>
                                             <th class="px-4 py-3 whitespace-nowrap">聯絡電話</th>
-                                            <!-- 優化審核狀態與行前通知欄位，融入表單區塊 -->
                                             <th class="px-4 py-3 text-center bg-orange-50/50 text-[#f38d00] border-l border-orange-100 whitespace-nowrap">審核狀態</th>
                                             <th class="px-4 py-3 text-center bg-blue-50/50 text-blue-600 border-l border-blue-100 whitespace-nowrap">發送行前通知</th>
                                         </tr>
@@ -1358,21 +1092,15 @@
                                             <td class="px-4 py-2 whitespace-nowrap">02-23456789</td>
                                             <td class="px-4 py-2 font-bold whitespace-nowrap">張董事長</td>
                                             <td class="px-4 py-2 whitespace-nowrap">0912345678</td>
-                                            
-                                            <!-- 審核狀態操作區 -->
                                             <td class="px-4 py-2 text-center border-l border-gray-100 min-w-[140px]">
                                                 <div id="audit-actions-row1" class="flex justify-center space-x-2">
                                                     <button onclick="openAuditModal('row1')" class="px-3 py-1.5 bg-green-500 text-white font-bold rounded shadow-sm hover:bg-green-600 transition flex items-center text-xs">
                                                         <i data-lucide="check" class="w-3.5 h-3.5 mr-1"></i> 通過
                                                     </button>
-                                                    <button onclick="rejectAudit('row1')" class="px-3 py-1.5 border border-gray-300 bg-white text-gray-600 font-bold rounded shadow-sm hover:bg-gray-50 transition flex items-center text-xs">
-                                                        未通過
-                                                    </button>
+                                                    <button onclick="rejectAudit('row1')" class="px-3 py-1.5 border border-gray-300 bg-white text-gray-600 font-bold rounded shadow-sm hover:bg-gray-50 transition flex items-center text-xs">未通過</button>
                                                 </div>
                                                 <div id="audit-result-row1" class="hidden font-bold text-sm"></div>
                                             </td>
-                                            
-                                            <!-- 發送行前通知操作區 (防呆: 審核通過前為反灰) -->
                                             <td class="px-4 py-2 text-center border-l border-gray-100 min-w-[120px]" id="notice-cell-row1">
                                                 <span class="text-gray-400 text-xs font-medium bg-gray-100 px-3 py-1.5 rounded-full border border-gray-200">需先審核</span>
                                             </td>
@@ -1383,17 +1111,12 @@
                         </div>
                     </div>
 
-                    <!-- ============================================== -->
-                    <!-- Tab 3: 會員列表 (擬真還原) -->
-                    <!-- ============================================== -->
+                    <!-- Tab 會員列表 -->
                     <div id="admin-tab-member" class="w-full hidden fade-in">
-                        <div class="text-xs text-gray-500 font-medium mb-4">
-                            首頁 / 會員管理 / 會員列表
-                        </div>
-                        
+                        <div class="text-xs text-gray-500 font-medium mb-4">首頁 / 會員管理 / 會員列表</div>
                         <div class="flex justify-between items-center mb-4">
                             <div class="flex items-center text-xl font-bold text-gray-800">
-                                會員列表 
+                                會員列表
                                 <button class="ml-3 w-8 h-8 border border-blue-600 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-50 transition"><i data-lucide="plus" class="w-4 h-4"></i></button>
                                 <button class="ml-2 w-8 h-8 border border-blue-600 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-50 transition"><i data-lucide="download" class="w-4 h-4"></i></button>
                             </div>
@@ -1405,7 +1128,6 @@
                                 <button class="w-8 h-8 border border-blue-600 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-50 transition"><i data-lucide="filter" class="w-4 h-4"></i></button>
                             </div>
                         </div>
-
                         <div class="bg-white shadow-sm border border-gray-200">
                             <table class="w-full text-left text-[13px]">
                                 <thead class="bg-gray-50 text-gray-600 border-b border-gray-200 font-bold">
@@ -1420,7 +1142,6 @@
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-100 text-gray-700">
-                                    <!-- Row 1 -->
                                     <tr class="hover:bg-gray-50 transition h-14">
                                         <td class="px-4 py-2 text-center text-blue-600 cursor-pointer hover:text-blue-800" onclick="showAdminTab('member-profile')"><i data-lucide="eye" class="w-4 h-4 mx-auto"></i></td>
                                         <td class="px-2 py-2"><input type="checkbox" class="w-4 h-4 border-gray-300 rounded"></td>
@@ -1431,12 +1152,8 @@
                                             <div class="w-6 h-6 bg-gray-200 rounded-full mr-2 shrink-0 overflow-hidden"><img src="https://ui-avatars.com/api/?name=地&background=random" class="w-full h-full object-cover"></div>
                                             <span class="truncate">李經理 (李大名)</span>
                                         </td>
-                                        <!-- 單純顯示靜態標籤 (不可自訂) -->
-                                        <td class="px-4 py-2">
-                                            <span class="text-xs text-gray-600 font-medium">講座課程</span>
-                                        </td>
+                                        <td class="px-4 py-2"><span class="text-xs text-gray-600 font-medium">講座課程</span></td>
                                     </tr>
-                                    <!-- Row 2 -->
                                     <tr class="hover:bg-gray-50 transition h-14">
                                         <td class="px-4 py-2 text-center text-blue-600 cursor-pointer hover:text-blue-800" onclick="showAdminTab('member-profile')"><i data-lucide="eye" class="w-4 h-4 mx-auto"></i></td>
                                         <td class="px-2 py-2"><input type="checkbox" class="w-4 h-4 border-gray-300 rounded"></td>
@@ -1447,128 +1164,58 @@
                                             <div class="w-6 h-6 bg-gray-200 rounded-full mr-2 shrink-0 overflow-hidden"><img src="https://ui-avatars.com/api/?name=張&background=random" class="w-full h-full object-cover"></div>
                                             <span class="truncate">張董</span>
                                         </td>
-                                        <!-- 單純顯示靜態標籤 (不可自訂) -->
-                                        <td class="px-4 py-2">
-                                            <span class="text-xs text-gray-600 font-medium">講座課程</span>
-                                        </td>
+                                        <td class="px-4 py-2"><span class="text-xs text-gray-600 font-medium">講座課程</span></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
-                    <!-- ============================================== -->
-                    <!-- Tab 4: 會員個人資料 (點擊眼睛進入) -->
-                    <!-- ============================================== -->
+                    <!-- Tab 會員個人資料 -->
                     <div id="admin-tab-member-profile" class="w-full hidden fade-in h-full flex flex-col">
                         <div class="text-xs text-gray-500 font-medium mb-4 cursor-pointer">
-                            <span onclick="showAdminTab('activity')" class="hover:text-blue-500">首頁</span> / 
-                            <span onclick="showAdminTab('member')" class="hover:text-blue-500">會員管理</span> / 
-                            <span onclick="showAdminTab('member')" class="hover:text-blue-500">會員列表</span> / 
+                            <span onclick="showAdminTab('activity')" class="hover:text-blue-500">首頁</span> /
+                            <span onclick="showAdminTab('member')" class="hover:text-blue-500">會員管理</span> /
+                            <span onclick="showAdminTab('member')" class="hover:text-blue-500">會員列表</span> /
                             <span class="text-[#f38d00] font-bold">個人紀錄</span>
                         </div>
-                        
                         <div class="flex-1 grid grid-cols-3 gap-6 items-start overflow-hidden">
-                            <!-- Column 1: 個人資料與代填人資訊 -->
                             <div class="space-y-6 pb-8 col-span-1 h-full overflow-y-auto hide-scrollbar pr-2">
-                                <!-- 個人資料 -->
                                 <div class="bg-white shadow-sm border border-gray-200 rounded p-6">
                                     <div class="flex justify-between items-center mb-6">
                                         <h2 class="text-xl font-bold text-gray-800">個人資料</h2>
-                                        <button class="w-8 h-8 border border-blue-600 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-50 transition">
-                                            <i data-lucide="pencil" class="w-4 h-4"></i>
-                                        </button>
+                                        <button class="w-8 h-8 border border-blue-600 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-50 transition"><i data-lucide="pencil" class="w-4 h-4"></i></button>
                                     </div>
                                     <div class="space-y-4">
-                                        <div class="border-b border-gray-100 pb-3 flex">
-                                            <span class="w-28 text-sm font-bold text-[#355487] shrink-0">Line 暱稱</span>
-                                            <span class="text-sm text-gray-800 font-medium">張董</span>
-                                        </div>
-                                        <div class="border-b border-gray-100 pb-3 flex">
-                                            <span class="w-28 text-sm font-bold text-[#355487] shrink-0">姓名</span>
-                                            <span class="text-sm text-gray-800 font-medium">張董事長</span>
-                                        </div>
-                                        <div class="border-b border-gray-100 pb-3 flex">
-                                            <span class="w-28 text-sm font-bold text-[#355487] shrink-0">身分證資料</span>
-                                            <span class="text-sm text-gray-800 font-medium">A123456789</span>
-                                        </div>
-                                        <div class="border-b border-gray-100 pb-3 flex">
-                                            <span class="w-28 text-sm font-bold text-[#355487] shrink-0">出生年月日</span>
-                                            <span class="text-sm text-gray-800 font-medium">1965/08/12</span>
-                                        </div>
-                                        <div class="border-b border-gray-100 pb-3 flex">
-                                            <span class="w-28 text-sm font-bold text-[#355487] shrink-0">性別</span>
-                                            <span class="text-sm text-gray-800 font-medium">男</span>
-                                        </div>
-                                        <div class="border-b border-gray-100 pb-3 flex">
-                                            <span class="w-28 text-sm font-bold text-[#355487] shrink-0">聯絡電話</span>
-                                            <span class="text-sm text-gray-800 font-medium">0912345678</span>
-                                        </div>
-                                        <div class="border-b border-gray-100 pb-3 flex">
-                                            <span class="w-28 text-sm font-bold text-[#355487] shrink-0">常用Email</span>
-                                            <span class="text-sm text-gray-800 font-medium break-all">chairman.zhang@taiwanbigcorp.com</span>
-                                        </div>
-                                        <div class="border-b border-gray-100 pb-3 flex">
-                                            <span class="w-28 text-sm font-bold text-[#355487] shrink-0">公司名稱</span>
-                                            <span class="text-sm text-gray-800 font-medium">台灣大企業集團</span>
-                                        </div>
-                                        <div class="border-b border-gray-100 pb-3 flex">
-                                            <span class="w-28 text-sm font-bold text-[#355487] shrink-0">公司部門</span>
-                                            <span class="text-sm text-gray-800 font-medium">高階管理層</span>
-                                        </div>
-                                        <div class="border-b border-gray-100 pb-3 flex">
-                                            <span class="w-28 text-sm font-bold text-[#355487] shrink-0">公司職稱</span>
-                                            <span class="text-sm text-gray-800 font-medium">董事長</span>
-                                        </div>
-                                        <div class="border-b border-gray-100 pb-3 flex">
-                                            <span class="w-28 text-sm font-bold text-[#355487] shrink-0">居住地址</span>
-                                            <span class="text-sm text-gray-800 font-medium leading-relaxed">台北市信義區信義路五段7號 (台北101大樓)</span>
-                                        </div>
-                                        <div class="border-b border-gray-100 pb-3 flex">
-                                            <span class="w-28 text-sm font-bold text-[#355487] shrink-0">戶籍地址</span>
-                                            <span class="text-sm text-gray-800 font-medium leading-relaxed">台北市大安區仁愛路三段100號</span>
-                                        </div>
-                                        <div class="border-b border-gray-100 pb-3 flex">
-                                            <span class="w-28 text-sm font-bold text-[#355487] shrink-0">飲食習慣</span>
-                                            <span class="text-sm text-gray-800 font-medium">全素</span>
-                                        </div>
+                                        <div class="border-b border-gray-100 pb-3 flex"><span class="w-28 text-sm font-bold text-[#355487] shrink-0">Line 暱稱</span><span class="text-sm text-gray-800 font-medium">張董</span></div>
+                                        <div class="border-b border-gray-100 pb-3 flex"><span class="w-28 text-sm font-bold text-[#355487] shrink-0">姓名</span><span class="text-sm text-gray-800 font-medium">張董事長</span></div>
+                                        <div class="border-b border-gray-100 pb-3 flex"><span class="w-28 text-sm font-bold text-[#355487] shrink-0">身分證資料</span><span class="text-sm text-gray-800 font-medium">A123456789</span></div>
+                                        <div class="border-b border-gray-100 pb-3 flex"><span class="w-28 text-sm font-bold text-[#355487] shrink-0">出生年月日</span><span class="text-sm text-gray-800 font-medium">1965/08/12</span></div>
+                                        <div class="border-b border-gray-100 pb-3 flex"><span class="w-28 text-sm font-bold text-[#355487] shrink-0">性別</span><span class="text-sm text-gray-800 font-medium">男</span></div>
+                                        <div class="border-b border-gray-100 pb-3 flex"><span class="w-28 text-sm font-bold text-[#355487] shrink-0">聯絡電話</span><span class="text-sm text-gray-800 font-medium">0912345678</span></div>
+                                        <div class="border-b border-gray-100 pb-3 flex"><span class="w-28 text-sm font-bold text-[#355487] shrink-0">常用Email</span><span class="text-sm text-gray-800 font-medium break-all">chairman.zhang@taiwanbigcorp.com</span></div>
+                                        <div class="border-b border-gray-100 pb-3 flex"><span class="w-28 text-sm font-bold text-[#355487] shrink-0">公司名稱</span><span class="text-sm text-gray-800 font-medium">台灣大企業集團</span></div>
+                                        <div class="border-b border-gray-100 pb-3 flex"><span class="w-28 text-sm font-bold text-[#355487] shrink-0">公司部門</span><span class="text-sm text-gray-800 font-medium">高階管理層</span></div>
+                                        <div class="border-b border-gray-100 pb-3 flex"><span class="w-28 text-sm font-bold text-[#355487] shrink-0">公司職稱</span><span class="text-sm text-gray-800 font-medium">董事長</span></div>
+                                        <div class="border-b border-gray-100 pb-3 flex"><span class="w-28 text-sm font-bold text-[#355487] shrink-0">居住地址</span><span class="text-sm text-gray-800 font-medium leading-relaxed">台北市信義區信義路五段7號 (台北101大樓)</span></div>
+                                        <div class="border-b border-gray-100 pb-3 flex"><span class="w-28 text-sm font-bold text-[#355487] shrink-0">戶籍地址</span><span class="text-sm text-gray-800 font-medium leading-relaxed">台北市大安區仁愛路三段100號</span></div>
+                                        <div class="border-b border-gray-100 pb-3 flex"><span class="w-28 text-sm font-bold text-[#355487] shrink-0">飲食習慣</span><span class="text-sm text-gray-800 font-medium">全素</span></div>
                                     </div>
                                 </div>
-
-                                <!-- 代填人資訊 -->
                                 <div class="bg-white shadow-sm border border-gray-200 rounded p-6">
                                     <div class="flex justify-between items-center mb-6">
                                         <h2 class="text-xl font-bold text-gray-800">代填人資訊</h2>
-                                        <button class="w-8 h-8 border border-blue-600 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-50 transition">
-                                            <i data-lucide="pencil" class="w-4 h-4"></i>
-                                        </button>
+                                        <button class="w-8 h-8 border border-blue-600 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-50 transition"><i data-lucide="pencil" class="w-4 h-4"></i></button>
                                     </div>
                                     <div class="space-y-4">
-                                        <div class="border-b border-gray-100 pb-3 flex">
-                                            <span class="w-28 text-sm font-bold text-[#f28c00] shrink-0">代填人姓名</span>
-                                            <span class="text-sm text-gray-800 font-medium">王秘書</span>
-                                        </div>
-                                        <div class="border-b border-gray-100 pb-3 flex">
-                                            <span class="w-28 text-sm font-bold text-[#f28c00] shrink-0">代填人聯絡電話</span>
-                                            <span class="text-sm text-gray-800 font-medium">0987654321</span>
-                                        </div>
-                                        <div class="border-b border-gray-100 pb-3 flex">
-                                            <span class="w-28 text-sm font-bold text-[#f28c00] shrink-0">代填人信箱</span>
-                                            <span class="text-sm text-gray-800 font-medium break-all">secretary.wang@taiwanbigcorp.com</span>
-                                        </div>
-                                        <div class="border-b border-gray-100 pb-3 flex">
-                                            <span class="w-28 text-sm font-bold text-[#f28c00] shrink-0">代填人公司</span>
-                                            <span class="text-sm text-gray-800 font-medium">台灣大企業集團</span>
-                                        </div>
-                                        <div class="border-b border-gray-100 pb-3 flex">
-                                            <span class="w-28 text-sm font-bold text-[#f28c00] shrink-0">代填人職稱</span>
-                                            <span class="text-sm text-gray-800 font-medium">董事長室專職秘書</span>
-                                        </div>
+                                        <div class="border-b border-gray-100 pb-3 flex"><span class="w-28 text-sm font-bold text-[#f28c00] shrink-0">代填人姓名</span><span class="text-sm text-gray-800 font-medium">王秘書</span></div>
+                                        <div class="border-b border-gray-100 pb-3 flex"><span class="w-28 text-sm font-bold text-[#f28c00] shrink-0">代填人聯絡電話</span><span class="text-sm text-gray-800 font-medium">0987654321</span></div>
+                                        <div class="border-b border-gray-100 pb-3 flex"><span class="w-28 text-sm font-bold text-[#f28c00] shrink-0">代填人信箱</span><span class="text-sm text-gray-800 font-medium break-all">secretary.wang@taiwanbigcorp.com</span></div>
+                                        <div class="border-b border-gray-100 pb-3 flex"><span class="w-28 text-sm font-bold text-[#f28c00] shrink-0">代填人公司</span><span class="text-sm text-gray-800 font-medium">台灣大企業集團</span></div>
+                                        <div class="border-b border-gray-100 pb-3 flex"><span class="w-28 text-sm font-bold text-[#f28c00] shrink-0">代填人職稱</span><span class="text-sm text-gray-800 font-medium">董事長室專職秘書</span></div>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Column 2: 關係人列表 -->
                             <div class="bg-white shadow-sm border border-gray-200 rounded p-6 h-full border-l-[6px] border-l-gray-100">
                                 <h2 class="text-xl font-bold text-gray-800 mb-6">關係人列表</h2>
                                 <div class="flex space-x-2">
@@ -1585,8 +1232,6 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Column 3: 相關參與紀錄 -->
                             <div class="bg-white shadow-sm border border-gray-200 rounded p-6 h-full border-l-[6px] border-l-gray-100">
                                 <h2 class="text-xl font-bold text-gray-800 mb-6">相關參與紀錄</h2>
                                 <div class="space-y-5">
@@ -1618,8 +1263,8 @@
 
                 </main>
             </div>
-            
-            <!-- 審核通過防呆 Modal -->
+
+            <!-- 審核 Modal -->
             <div id="audit-modal" class="fixed inset-0 bg-gray-900/40 z-[100] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
                 <div class="bg-white rounded-2xl w-[420px] shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300" id="audit-modal-content">
                     <div class="bg-orange-50 px-6 py-4 border-b border-orange-100 flex items-center text-[#f38d00]">
@@ -1627,9 +1272,7 @@
                         <h3 class="text-lg font-bold">審核確認</h3>
                     </div>
                     <div class="p-6">
-                        <p class="text-gray-700 font-medium leading-relaxed mb-6">
-                            審核通過後，<span class="text-green-600 font-bold">系統將自動發送通知及 QR Code</span> 至該名參與者的 Email。<br>您確定要執行通過審核嗎？
-                        </p>
+                        <p class="text-gray-700 font-medium leading-relaxed mb-6">審核通過後，<span class="text-green-600 font-bold">系統將自動發送通知及 QR Code</span> 至該名參與者的 Email。<br>您確定要執行通過審核嗎？</p>
                         <div class="flex justify-end space-x-3">
                             <button onclick="closeAuditModal()" class="px-5 py-2.5 border border-gray-300 text-gray-600 rounded-xl font-bold hover:bg-gray-50 transition">取消</button>
                             <button onclick="confirmAuditPass()" class="px-5 py-2.5 bg-[#06C755] text-white rounded-xl font-bold shadow-md hover:bg-[#05b34c] transition flex items-center">
@@ -1639,8 +1282,8 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- 發送行前通知防呆 Modal -->
+
+            <!-- 行前通知 Modal -->
             <div id="notice-modal" class="fixed inset-0 bg-gray-900/40 z-[100] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
                 <div class="bg-white rounded-2xl w-[420px] shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300" id="notice-modal-content">
                     <div class="bg-blue-50 px-6 py-4 border-b border-blue-100 flex items-center text-blue-600">
@@ -1648,9 +1291,7 @@
                         <h3 class="text-lg font-bold">發送行前通知確認</h3>
                     </div>
                     <div class="p-6">
-                        <p class="text-gray-700 font-medium leading-relaxed mb-6">
-                            <span class="text-blue-600 font-bold">系統將自動發送行前通知至參加者 Email。</span><br>您確定要執行發送嗎？
-                        </p>
+                        <p class="text-gray-700 font-medium leading-relaxed mb-6"><span class="text-blue-600 font-bold">系統將自動發送行前通知至參加者 Email。</span><br>您確定要執行發送嗎？</p>
                         <div class="flex justify-end space-x-3">
                             <button onclick="closeNoticeModal()" class="px-5 py-2.5 border border-gray-300 text-gray-600 rounded-xl font-bold hover:bg-gray-50 transition">取消</button>
                             <button onclick="confirmNotice()" class="px-5 py-2.5 bg-blue-500 text-white rounded-xl font-bold shadow-md hover:bg-blue-600 transition flex items-center">
@@ -1660,87 +1301,70 @@
                     </div>
                 </div>
             </div>
-
         </div>
+        <!-- admin-view 結束 -->
+
     </div>
+    <!-- flex-1 容器結束 -->
 
     <script>
-        // 初始化 Lucide 圖標
         lucide.createIcons();
 
-        // 畫面切換邏輯 (手機端)
-function showScreen(screenId, context) {
-    let screens;
-    if (context === 'shared') {
-        screens = ['shared-screen1', 'shared-screen2', 'shared-screen3'];
-    } else {
-        screens = ['screen1', 'screen2', 'screen4', 'screen5'];
-    }
-
-    screens.forEach(id => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        if (id === screenId) {
-            el.style.transform = 'translateY(0)';
-        } else {
-            el.style.transform = 'translateY(100%)';
+        function showScreen(screenId, context) {
+            let screens;
+            if (context === 'shared') {
+                screens = ['shared-screen1', 'shared-screen2', 'shared-screen3'];
+            } else {
+                screens = ['screen1', 'screen2', 'screen4', 'screen5'];
+            }
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.style.transform = (id === screenId) ? 'translateY(0)' : 'translateY(100%)';
+            });
         }
-    });
-}
 
-        // 用戶端/後台視角切換
-       function switchView(view) {
-    const userView = document.getElementById('user-view');
-    const adminView = document.getElementById('admin-view');
-    const emailView = document.getElementById('email-view');
-    const sharedView = document.getElementById('shared-user-view'); // ← 加這行
-    const btnUser = document.getElementById('btn-user-view');
-    const btnAdmin = document.getElementById('btn-admin-view');
-    const btnEmail = document.getElementById('btn-email-view');
-    const btnShared = document.getElementById('btn-shared-view'); // ← 加這行
+        function switchView(view) {
+            const userView = document.getElementById('user-view');
+            const adminView = document.getElementById('admin-view');
+            const emailView = document.getElementById('email-view');
+            const sharedView = document.getElementById('shared-user-view');
+            const btnUser = document.getElementById('btn-user-view');
+            const btnAdmin = document.getElementById('btn-admin-view');
+            const btnEmail = document.getElementById('btn-email-view');
+            const btnShared = document.getElementById('btn-shared-view');
 
-    // 隱藏全部
-    userView.classList.add('hidden');
-    adminView.classList.add('hidden');
-    adminView.classList.remove('flex');
-    emailView.classList.add('hidden');
-    emailView.classList.remove('flex');
-    sharedView.classList.add('hidden'); // ← 加這行
+            userView.classList.add('hidden');
+            adminView.classList.add('hidden'); adminView.classList.remove('flex');
+            emailView.classList.add('hidden'); emailView.classList.remove('flex');
+            sharedView.classList.add('hidden');
 
-    // 重置按鈕樣式
-    btnUser.className = 'px-6 py-2 rounded-full font-bold bg-gray-700 text-gray-300 hover:bg-gray-600 transition';
-    btnAdmin.className = 'px-6 py-2 rounded-full font-bold bg-gray-700 text-gray-300 hover:bg-gray-600 transition';
-    btnEmail.className = 'px-6 py-2 rounded-full font-bold bg-gray-700 text-gray-300 hover:bg-gray-600 transition';
-    btnShared.className = 'px-5 py-1.5 text-sm rounded-full font-bold bg-gray-700 text-gray-300 hover:bg-gray-600 transition shrink-0'; // ← 加這行
+            btnUser.className = 'px-6 py-2 rounded-full font-bold bg-gray-700 text-gray-300 hover:bg-gray-600 transition';
+            btnAdmin.className = 'px-6 py-2 rounded-full font-bold bg-gray-700 text-gray-300 hover:bg-gray-600 transition';
+            btnEmail.className = 'px-6 py-2 rounded-full font-bold bg-gray-700 text-gray-300 hover:bg-gray-600 transition';
+            btnShared.className = 'px-5 py-1.5 text-sm rounded-full font-bold bg-gray-700 text-gray-300 hover:bg-gray-600 transition shrink-0';
 
-    if (view === 'user') {
-        userView.classList.remove('hidden');
-        btnUser.className = 'px-6 py-2 rounded-full font-bold bg-blue-600 text-white transition';
-    } else if (view === 'shared') { // ← 整個 else if 都是新增的
-        sharedView.classList.remove('hidden');
-        sharedView.classList.add('flex');
-        btnShared.className = 'px-5 py-1.5 text-sm rounded-full font-bold bg-blue-600 text-white transition shrink-0';
-        lucide.createIcons();
-    } else if (view === 'admin') {
-        adminView.classList.remove('hidden');
-        adminView.classList.add('flex');
-        btnAdmin.className = 'px-6 py-2 rounded-full font-bold bg-blue-600 text-white transition';
-    } else if (view === 'email') {
-        emailView.classList.remove('hidden');
-        emailView.classList.add('flex');
-        btnEmail.className = 'px-6 py-2 rounded-full font-bold bg-blue-600 text-white transition';
-        lucide.createIcons();
-    }
-}
+            if (view === 'user') {
+                userView.classList.remove('hidden');
+                btnUser.className = 'px-6 py-2 rounded-full font-bold bg-blue-600 text-white transition';
+            } else if (view === 'shared') {
+                sharedView.classList.remove('hidden'); sharedView.classList.add('flex');
+                btnShared.className = 'px-5 py-1.5 text-sm rounded-full font-bold bg-blue-600 text-white transition shrink-0';
+                lucide.createIcons();
+            } else if (view === 'admin') {
+                adminView.classList.remove('hidden'); adminView.classList.add('flex');
+                btnAdmin.className = 'px-6 py-2 rounded-full font-bold bg-blue-600 text-white transition';
+            } else if (view === 'email') {
+                emailView.classList.remove('hidden'); emailView.classList.add('flex');
+                btnEmail.className = 'px-6 py-2 rounded-full font-bold bg-blue-600 text-white transition';
+                lucide.createIcons();
+            }
+        }
 
-        // 後台 Tab 切換
         function showAdminTab(tab) {
-            document.getElementById('admin-tab-activity').classList.add('hidden');
-            document.getElementById('admin-tab-registration').classList.add('hidden');
-            document.getElementById('admin-tab-member').classList.add('hidden');
-            document.getElementById('admin-tab-member-profile').classList.add('hidden');
-            
-            // Reset sidebar active states
+            ['activity','registration','member','member-profile'].forEach(t => {
+                document.getElementById(`admin-tab-${t}`).classList.add('hidden');
+            });
             document.getElementById('nav-activity').className = 'flex items-center px-6 py-3.5 text-gray-700 hover:bg-orange-50 hover:text-[#f38d00] transition text-sm font-bold';
             document.getElementById('nav-activity').parentElement.className = '';
             document.getElementById('nav-member').className = 'flex items-center justify-between px-6 py-3.5 text-gray-700 hover:bg-orange-50 hover:text-[#f38d00] transition text-sm font-bold';
@@ -1756,75 +1380,50 @@ function showScreen(screenId, context) {
             lucide.createIcons();
         }
 
-        // 後台側邊欄收放邏輯
         function toggleSidebar() {
             const sidebar = document.getElementById('admin-sidebar');
-            if (sidebar.classList.contains('w-[220px]')) {
-                sidebar.classList.replace('w-[220px]', 'w-0');
-            } else {
-                sidebar.classList.replace('w-0', 'w-[220px]');
-            }
+            sidebar.classList.contains('w-[220px]') ? sidebar.classList.replace('w-[220px]','w-0') : sidebar.classList.replace('w-0','w-[220px]');
         }
 
-        // 圖文選單收放邏輯 (修正版)
         let isRichMenuOpen = true;
         function toggleRichMenu() {
             const content = document.getElementById('rich-menu-content');
             const text = document.getElementById('rich-menu-toggle-text');
-            
             isRichMenuOpen = !isRichMenuOpen;
             if (isRichMenuOpen) {
-                content.classList.remove('max-h-0');
-                content.classList.add('max-h-[300px]');
+                content.classList.replace('max-h-0','max-h-[300px]');
                 text.innerText = '董事學會 15週年年會開始報名 ▾';
             } else {
-                content.classList.remove('max-h-[300px]');
-                content.classList.add('max-h-0');
+                content.classList.replace('max-h-[300px]','max-h-0');
                 text.innerText = '董事學會 15週年年會開始報名 ▴';
             }
         }
 
-        // 表單代填切換
         function toggleProxy(isProxy) {
             const btnSelf = document.getElementById('btn-self');
             const btnProxy = document.getElementById('btn-proxy');
             const proxyFields = document.getElementById('proxy-fields');
-
             if (isProxy) {
                 btnProxy.className = 'flex-1 py-2 rounded-lg border-2 border-[#f28c00] bg-[#f28c00] text-white font-bold transition';
                 btnSelf.className = 'flex-1 py-2 rounded-lg border-2 border-gray-300 text-gray-600 font-bold hover:bg-gray-50 transition';
-                proxyFields.classList.remove('hidden');
-                proxyFields.classList.add('slide-down');
+                proxyFields.classList.remove('hidden'); proxyFields.classList.add('slide-down');
             } else {
                 btnSelf.className = 'flex-1 py-2 rounded-lg border-2 border-[#f28c00] bg-[#f28c00] text-white font-bold transition';
                 btnProxy.className = 'flex-1 py-2 rounded-lg border-2 border-gray-300 text-gray-600 font-bold hover:bg-gray-50 transition';
-                proxyFields.classList.add('hidden');
-                proxyFields.classList.remove('slide-down');
+                proxyFields.classList.add('hidden'); proxyFields.classList.remove('slide-down');
             }
         }
 
-        // 送出表單
-        function submitForm() {
-            showScreen('screen5');
-        }
+        function submitForm() { showScreen('screen5'); }
 
-        // ==========================================
-        // LINE 分享面板與 Toast 通知邏輯
-        // ==========================================
         let selectedFriends = 0;
         function openShareModal() {
             const modal = document.getElementById('share-modal');
             const panel = document.getElementById('share-panel');
             modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                panel.classList.remove('translate-y-full');
-            }, 10);
-            
+            setTimeout(() => { modal.classList.remove('opacity-0'); panel.classList.remove('translate-y-full'); }, 10);
             selectedFriends = 0;
-            ['f1', 'f2', 'f3', 'f4'].forEach(id => {
-                document.getElementById(`check-${id}`).checked = false;
-            });
+            ['f1','f2','f3','f4'].forEach(id => { document.getElementById(`check-${id}`).checked = false; });
             updateShareButton();
         }
 
@@ -1856,66 +1455,46 @@ function showScreen(screenId, context) {
 
         function sendShare() {
             closeShareModal();
-            setTimeout(() => {
-                showToast(`已成功分享活動至 ${selectedFriends} 位好友/群組`);
-            }, 300);
+            setTimeout(() => { showToast(`已成功分享活動至 ${selectedFriends} 位好友/群組`); }, 300);
         }
 
         function showToast(message) {
-    const toast = document.getElementById('toast-notif');
-    if (!toast) return;
-    document.getElementById('toast-text').innerText = message;
-    toast.classList.remove('opacity-0');
-    toast.classList.add('opacity-100');
-    setTimeout(() => {
-        toast.classList.remove('opacity-100');
-        toast.classList.add('opacity-0');
-    }, 3000);
-}
+            const toast = document.getElementById('toast-notif');
+            if (!toast) return;
+            document.getElementById('toast-text').innerText = message;
+            toast.classList.remove('opacity-0'); toast.classList.add('opacity-100');
+            setTimeout(() => { toast.classList.remove('opacity-100'); toast.classList.add('opacity-0'); }, 3000);
+        }
 
-        // ==========================================
-        // 後台審核與行前通知防呆 Modal 邏輯
-        // ==========================================
         let currentActionRow = null;
 
         function openAuditModal(rowId) {
             currentActionRow = rowId;
             const modal = document.getElementById('audit-modal');
             const content = document.getElementById('audit-modal-content');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                content.classList.remove('scale-95');
-            }, 10);
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
         }
 
         function closeAuditModal() {
             const modal = document.getElementById('audit-modal');
             const content = document.getElementById('audit-modal-content');
-            modal.classList.add('opacity-0');
-            content.classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }, 300);
+            modal.classList.add('opacity-0'); content.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
         }
 
         function confirmAuditPass() {
             if (currentActionRow) {
                 document.getElementById(`audit-actions-${currentActionRow}`).classList.add('hidden');
                 const resultDiv = document.getElementById(`audit-result-${currentActionRow}`);
-                resultDiv.innerHTML = `<button onclick="resetAudit('${currentActionRow}')" title="點擊重新審核" class="mx-auto text-green-600 flex items-center justify-center bg-green-50 px-3 py-1.5 rounded font-bold shadow-sm border border-green-100 hover:bg-green-100 transition"><i data-lucide="check-circle-2" class="w-4 h-4 mr-1"></i> 已通過 <i data-lucide="refresh-cw" class="w-3 h-3 ml-1.5 opacity-70"></i></button>`;
+                resultDiv.innerHTML = `<button onclick="resetAudit('${currentActionRow}')" class="mx-auto text-green-600 flex items-center justify-center bg-green-50 px-3 py-1.5 rounded font-bold shadow-sm border border-green-100 hover:bg-green-100 transition"><i data-lucide="check-circle-2" class="w-4 h-4 mr-1"></i> 已通過 <i data-lucide="refresh-cw" class="w-3 h-3 ml-1.5 opacity-70"></i></button>`;
                 resultDiv.classList.remove('hidden');
-                
-                // 解鎖「發送行前通知」按鈕
                 const noticeCell = document.getElementById(`notice-cell-${currentActionRow}`);
                 if (noticeCell) {
                     noticeCell.innerHTML = `<button onclick="openNoticeModal('${currentActionRow}')" class="px-4 py-1.5 bg-blue-500 text-white font-bold rounded shadow-sm hover:bg-blue-600 transition flex items-center justify-center text-xs mx-auto"><i data-lucide="send" class="w-3.5 h-3.5 mr-1"></i> 發送通知</button>`;
                 }
-
                 lucide.createIcons();
-                showToast('審核通過！已發送通知及 QR Code 至 Email，並開放行前通知');
+                showToast('審核通過！已發送通知及 QR Code 至 Email');
             }
             closeAuditModal();
         }
@@ -1923,84 +1502,60 @@ function showScreen(screenId, context) {
         function rejectAudit(rowId) {
             document.getElementById(`audit-actions-${rowId}`).classList.add('hidden');
             const resultDiv = document.getElementById(`audit-result-${rowId}`);
-            resultDiv.innerHTML = `<button onclick="resetAudit('${rowId}')" title="點擊重新審核" class="mx-auto text-red-500 flex items-center justify-center bg-red-50 px-3 py-1.5 rounded font-bold shadow-sm border border-red-100 hover:bg-red-100 transition"><i data-lucide="x-circle" class="w-4 h-4 mr-1"></i> 未通過 <i data-lucide="refresh-cw" class="w-3 h-3 ml-1.5 opacity-70"></i></button>`;
+            resultDiv.innerHTML = `<button onclick="resetAudit('${rowId}')" class="mx-auto text-red-500 flex items-center justify-center bg-red-50 px-3 py-1.5 rounded font-bold shadow-sm border border-red-100 hover:bg-red-100 transition"><i data-lucide="x-circle" class="w-4 h-4 mr-1"></i> 未通過 <i data-lucide="refresh-cw" class="w-3 h-3 ml-1.5 opacity-70"></i></button>`;
             resultDiv.classList.remove('hidden');
             lucide.createIcons();
         }
 
-        // 重置審核狀態 (讓用戶能改變狀態)
         function resetAudit(rowId) {
-            // 隱藏結果標籤，重新顯示操作按鈕
-            const resultDiv = document.getElementById(`audit-result-${rowId}`);
-            resultDiv.classList.add('hidden');
+            document.getElementById(`audit-result-${rowId}`).classList.add('hidden');
             document.getElementById(`audit-actions-${rowId}`).classList.remove('hidden');
-            
-            // 復原行前通知按鈕為「需先審核」狀態
             const noticeCell = document.getElementById(`notice-cell-${rowId}`);
-            if (noticeCell) {
-                noticeCell.innerHTML = `<span class="text-gray-400 text-xs font-medium bg-gray-100 px-3 py-1.5 rounded-full border border-gray-200">需先審核</span>`;
-            }
-
+            if (noticeCell) noticeCell.innerHTML = `<span class="text-gray-400 text-xs font-medium bg-gray-100 px-3 py-1.5 rounded-full border border-gray-200">需先審核</span>`;
             showToast('已重置為待審核狀態');
         }
 
-        // 行前通知防呆
         function openNoticeModal(rowId) {
             currentActionRow = rowId;
             const modal = document.getElementById('notice-modal');
             const content = document.getElementById('notice-modal-content');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                content.classList.remove('scale-95');
-            }, 10);
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
         }
 
         function closeNoticeModal() {
             const modal = document.getElementById('notice-modal');
             const content = document.getElementById('notice-modal-content');
-            modal.classList.add('opacity-0');
-            content.classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }, 300);
+            modal.classList.add('opacity-0'); content.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
         }
 
         function confirmNotice() {
             if (currentActionRow) {
-                // 更新後台表格狀態
                 const noticeCell = document.getElementById(`notice-cell-${currentActionRow}`);
                 if (noticeCell) {
                     noticeCell.innerHTML = `<span class="text-blue-600 text-xs font-bold bg-blue-50 px-3 py-1.5 rounded border border-blue-100 flex items-center justify-center w-fit mx-auto"><i data-lucide="check" class="w-3.5 h-3.5 mr-1"></i> 已發送</span>`;
                 }
-                
-                // 觸發顯示信箱中的行前通知
                 const inboxRow2 = document.getElementById('inbox-row-2');
                 if (inboxRow2) {
                     inboxRow2.classList.remove('hidden');
                     const badge = document.getElementById('inbox-badge');
-                    if(badge) badge.innerText = '2';
+                    if (badge) badge.innerText = '2';
                 }
-
                 lucide.createIcons();
                 showToast('已成功發送行前通知至參加者 Email！');
             }
             closeNoticeModal();
         }
 
-        // ==========================================
-        // 用戶端信箱 (Gmail) 介面控制邏輯
-        // ==========================================
         function toggleGmailSidebar() {
             const sidebar = document.getElementById('gmail-sidebar');
             if (sidebar.classList.contains('w-[250px]')) {
-                sidebar.classList.replace('w-[250px]', 'w-0');
-                sidebar.classList.replace('px-3', 'px-0');
+                sidebar.classList.replace('w-[250px]','w-0');
+                sidebar.classList.replace('px-3','px-0');
             } else {
-                sidebar.classList.replace('w-0', 'w-[250px]');
-                sidebar.classList.replace('px-0', 'px-3');
+                sidebar.classList.replace('w-0','w-[250px]');
+                sidebar.classList.replace('px-0','px-3');
             }
         }
 
@@ -2012,43 +1567,20 @@ function showScreen(screenId, context) {
         function openEmail(id) {
             document.getElementById('email-list-view').classList.add('hidden');
             document.getElementById('email-read-view').classList.remove('hidden');
-            
-            // 隱藏所有信件內容
             document.getElementById('email-content-1').classList.add('hidden');
             document.getElementById('email-content-2').classList.add('hidden');
-            
-            // 顯示對應信件
             document.getElementById(`email-content-${id}`).classList.remove('hidden');
-            
-            // 將列表中的該項目標示為已讀 (移除粗體與白背景)
-            const row = document.getElementById(`inbox-row-${id}`);
-            if (row) {
-                row.classList.remove('bg-white');
-                row.classList.add('bg-gray-50');
-                const titleSpan = row.querySelector('.text-gray-900.font-bold');
-                if (titleSpan) {
-                    titleSpan.classList.replace('text-gray-900', 'text-gray-600');
-                    titleSpan.classList.remove('font-bold');
-                    titleSpan.classList.add('font-normal');
-                }
-                const senderSpan = row.querySelectorAll('.font-bold')[0]; // First element with font-bold
-                if (senderSpan && senderSpan.classList.contains('w-48')) {
-                    senderSpan.classList.remove('font-bold');
-                    senderSpan.classList.add('font-normal');
-                    senderSpan.classList.replace('text-gray-900', 'text-gray-600');
-                }
-            }
             lucide.createIcons();
         }
 
         function resetApp(context) {
-    if (context === 'shared') {
-        showScreen('shared-screen1', 'shared');
-    } else {
-        showScreen('screen1');
-    }
-}
-        // 初始化狀態
+            if (context === 'shared') {
+                showScreen('shared-screen1', 'shared');
+            } else {
+                showScreen('screen1');
+            }
+        }
+
         showScreen('screen1');
     </script>
 </body>
