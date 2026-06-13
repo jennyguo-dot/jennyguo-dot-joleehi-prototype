@@ -482,29 +482,34 @@
                             <div class="text-[10px] text-gray-500 mt-auto ml-2 mb-1">上午 10:41</div>
                         </div>
 
-                        <!-- 訊息 2: 卡片 -->
-                        <div class="flex items-start mb-6">
-                            <div class="w-10 h-10 shrink-0 mr-2 opacity-0"></div>
-                            <div class="bg-white rounded-[20px] shadow-md max-w-[270px] overflow-hidden border border-gray-100 relative">
-                                <div class="h-32 bg-[#355487] flex flex-col items-center justify-center p-4 text-center relative overflow-hidden">
-                                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-white/10 rounded-full"></div>
-                                    <div class="absolute -left-2 -bottom-2 w-10 h-10 bg-white/10 rounded-full"></div>
-                                    <div class="text-white/80 text-[10px] tracking-[0.2em] mb-1 font-medium">BUSINESS FORUM</div>
-                                    <h3 class="text-white text-xl font-bold tracking-wide leading-snug">外資精選聯誼會</h3>
-                                    <div class="mt-2 bg-[#f28c00] text-white text-[10px] px-2 py-0.5 rounded font-bold">企業全球化佈局</div>
-                                </div>
-                                <div class="p-4">
-                                    <div class="text-[13px] text-gray-700 space-y-1.5 mb-4 font-medium">
-                                        <p><span class="text-gray-400 mr-1">日期</span> 2026/06/05 14:00</p>
-                                        <p><span class="text-gray-400 mr-1">地點</span> 台北 101 會議中心</p>
-                                    </div>
-                                    <button onclick="showScreen('shared-screen2', 'shared')" class="w-full py-2.5 bg-[#fdf3e3] text-[#f28c00] rounded-xl text-sm font-bold flex items-center justify-center transition active:bg-orange-100">
-                                        查看活動與報名 <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="text-[10px] text-gray-500 mt-auto ml-2 mb-1">上午 10:41</div>
-                        </div>
+                  <!-- 訊息 2: 網址預覽泡泡 -->
+<div class="flex items-start mb-6">
+    <div class="w-10 h-10 shrink-0 mr-2 opacity-0"></div>
+    <div class="flex flex-col items-start max-w-[270px]">
+        <!-- 網址文字泡泡 -->
+        <div class="bg-white text-[#1a73e8] text-[14px] p-3 rounded-2xl shadow-sm leading-relaxed break-all mb-1 border border-gray-100">
+            https://himytown.com/event/foreign-investment-2026
+        </div>
+        <!-- OG 預覽卡片 -->
+        <div onclick="showScreen('shared-screen2', 'shared')" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden cursor-pointer hover:brightness-95 transition w-[270px]">
+            <!-- 縮圖區 -->
+            <div class="h-[140px] bg-gradient-to-br from-[#355487] to-[#1a3260] flex flex-col items-center justify-center p-4 text-center relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 w-20 h-20 bg-white/10 rounded-full"></div>
+                <div class="absolute -left-2 -bottom-2 w-12 h-12 bg-white/10 rounded-full"></div>
+                <div class="text-white/70 text-[9px] tracking-[0.2em] mb-2 font-medium">HIMYTOWN.COM</div>
+                <h3 class="text-white text-[16px] font-bold leading-snug mb-2">外資精選聯誼會</h3>
+                <div class="bg-[#f28c00] text-white text-[10px] px-2 py-0.5 rounded font-bold">中型企業全球化佈局</div>
+            </div>
+            <!-- 文字區 -->
+            <div class="p-3">
+                <p class="text-gray-900 text-[13px] font-bold leading-snug mb-1">外資精選聯誼會 | 2026/06/05</p>
+                <p class="text-gray-500 text-[11px] leading-relaxed">台北 101 會議中心 · 免費參加 · 審核制</p>
+                <p class="text-[#1a73e8] text-[11px] mt-1.5 font-medium">himytown.com</p>
+            </div>
+        </div>
+    </div>
+    <div class="text-[10px] text-gray-500 mt-auto ml-2 mb-1">上午 10:41</div>
+</div>
 
                         <!-- 訊息 3 -->
                         <div class="flex items-end justify-end mt-2 fade-in">
